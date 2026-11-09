@@ -43,7 +43,7 @@ main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
 body.dj-on .art input{display:block}
 body:not(.dj-on) .row{grid-template-columns:1fr auto}
 body:not(.dj-on) .bar{grid-column:1/3}
-main.ro .art input,main.ro .row>span:first-child{display:none}
+main.ro .art input,main.ro .row>span:first-child,body:not(.dj-on) .row>span:first-child{display:none}
 body.dj-on main.ro .row{grid-template-columns:1fr auto}
 body.dj-on main.ro .bar{grid-column:1/3}
 .note{font-size:13px;color:var(--mute);margin:12px 2px}
@@ -83,8 +83,11 @@ const D=[
 {g:"nh",n:"Steinmarder",r:[["alle","16.10-28.2"]]},
 {g:"nh",n:"Iltis",r:[["alle","16.10-28.2"]]},
 {g:"nh",n:"Mink",r:[["alle","16.10-28.2"]]},
+{g:"nh",n:"Bisam",r:[["alle",Y]]},
+{g:"nh",n:"Nutria",r:[["alle",Y]]},
 {g:"nh",n:"Hermelin",r:[["alle","1.9-28.2"]]},
 {g:"fw",n:"Fasan",r:[["alle","16.10-15.1"]]},
+{g:"fw",n:"Rebhuhn",r:[["alle","1.9-15.12","bis 31.12.2027 geschont (keine Jagdzeit), danach 1.9.–15.12.","2027-12-31"]]},
 {g:"fw",n:"Wildtruthahn",r:[["Hähne","16.3-30.4"]]},
 {g:"fw",n:"Stockente",r:[["alle","16.9-15.1"]]},
 {g:"fw",n:"Grau-/Kanada-/Nilgans",r:[["alle","16.7-31.1","in Schongebieten (Unterer Niederrhein, Weseraue) 15.10.–31.1. Schonzeit"],["juvenile Nilgänse",Y]]},
@@ -109,11 +112,11 @@ const inAny=(s,v)=>rg(s).some(([a,b])=>inR(pd(a),pd(b),v));
 const now=new Date(),today=(now.getMonth()+1)*100+now.getDate();
 const fmt=s=>rg(s).map(([a,b])=>a==="1.1"&&b==="31.12"?"ganzjährig":a+". – "+b+".").join(" und ");
 const key=(n,l)=>n+"|"+l;
-function row(w,[l,s,note]){
-  const open=inAny(s,today),k=key(w.n,l);
-  let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${inAny(s,m*100+15)?"o":""}"></i>`;
+function row(w,[l,s,note,until]){
+  const lock=until&&now<=new Date(until+"T23:59:59"),open=!lock&&inAny(s,today),k=key(w.n,l);
+  let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${!lock&&inAny(s,m*100+15)?"o":""}"></i>`;
   const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
-  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagdbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
+  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
 }
 const art=w=>`<section class="art"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
 const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
