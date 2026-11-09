@@ -43,6 +43,9 @@ main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
 body.dj-on .art input{display:block}
 body:not(.dj-on) .row{grid-template-columns:1fr auto}
 body:not(.dj-on) .bar{grid-column:1/3}
+main.ro .art input,main.ro .row>span:first-child{display:none}
+body.dj-on main.ro .row{grid-template-columns:1fr auto}
+body.dj-on main.ro .bar{grid-column:1/3}
 .note{font-size:13px;color:var(--mute);margin:12px 2px}
 .ctl{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 .ctl select,.ctl input{flex:1;min-width:120px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
@@ -118,7 +121,7 @@ function render(){
   document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
   if(!S.dj&&(S.tab==="free"||S.tab==="book"))S.tab="nh";
   $("tabs").innerHTML=TABS.map(([id,t,x])=>`<button data-t="${id}" class="${x?"djtab ":""}${S.tab===id?"on":""}">${t}</button>`).join("");
-  const v=$("view");
+  const v=$("view");v.classList.toggle("ro",S.tab==="free");
   if(S.tab==="book")return book(v);
   if(S.tab==="free"){
     const l=D.map(w=>({...w,r:w.r.filter(r=>S.free[key(w.n,r[0])])})).filter(w=>w.r.length);
