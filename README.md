@@ -1,1 +1,2 @@
-Webseite hier aufrufen: https://iqgmoritz.github.io/jagdzeiten-app/
+Webseite hier aufrufen: https://moritz-kol.github.io/jagdzeiten-app/
+
