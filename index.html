@@ -113,7 +113,7 @@ function row(w,[l,s,note]){
   const open=inAny(s,today),k=key(w.n,l);
   let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${inAny(s,m*100+15)?"o":""}"></i>`;
   const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
-  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagdbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
+  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
 }
 const art=w=>`<section class="art"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
 const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
