@@ -34,7 +34,9 @@ main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
 .art h2{font:600 18px Georgia,serif;margin:8px 0 2px;display:flex;align-items:center;gap:10px}
 .row{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
 .row:first-of-type{border-top:0}
-.row b{font-weight:600}.row small{color:var(--mute)}
+.row b{font-weight:600}
+.row.off b,.art.off h2 span{color:var(--mute);opacity:.75}
+.row.off b{font-weight:500}.row small{color:var(--mute)}
 .chip{font-size:12px;border-radius:99px;padding:1px 8px;background:var(--line);color:var(--mute)}
 .chip.o{background:var(--ok);color:#fff}
 .bar{grid-column:2/4;display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
@@ -116,11 +118,11 @@ function row(w,[l,s,note,until]){
   const lock=until&&now<=new Date(until+"T23:59:59"),open=!lock&&inAny(s,today),k=key(w.n,l);
   let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${!lock&&inAny(s,m*100+15)?"o":""}"></i>`;
   const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
-  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
+  return `<div class="row${open?"":" off"}">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
 }
 const rOpen=([l,s,n,u])=>!(u&&now<=new Date(u+"T23:59:59"))&&inAny(s,today);
 const srt=l=>[...l].sort((a,b)=>b.r.some(rOpen)-a.r.some(rOpen));
-const art=w=>`<section class="art"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
+const art=w=>`<section class="art${w.r.some(rOpen)?"":" off"}"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
 const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
 function render(){
   document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
