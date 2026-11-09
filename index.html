@@ -122,7 +122,7 @@ function row(w,[l,s,note,until]){
 }
 const rOpen=([l,s,n,u])=>!(u&&now<=new Date(u+"T23:59:59"))&&inAny(s,today);
 const srt=l=>[...l].sort((a,b)=>b.r.some(rOpen)-a.r.some(rOpen));
-const art=w=>`<section class="art${w.r.some(rOpen)?"":" off"}"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
+const art=w=>`<section class="art${w.r.some(rOpen)?"":" off"}"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${[...w.r].sort((a,b)=>rOpen(b)-rOpen(a)).map(r=>row(w,r)).join("")}</section>`;
 const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
 function render(){
   document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
