@@ -118,6 +118,8 @@ function row(w,[l,s,note,until]){
   const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
   return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
 }
+const rOpen=([l,s,n,u])=>!(u&&now<=new Date(u+"T23:59:59"))&&inAny(s,today);
+const srt=l=>[...l].sort((a,b)=>b.r.some(rOpen)-a.r.some(rOpen));
 const art=w=>`<section class="art"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
 const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
 function render(){
@@ -128,8 +130,8 @@ function render(){
   if(S.tab==="book")return book(v);
   if(S.tab==="free"){
     const l=D.map(w=>({...w,r:w.r.filter(r=>S.free[key(w.n,r[0])])})).filter(w=>w.r.length);
-    v.innerHTML=l.length?l.map(art).join("")+NOTE:`<p class="empty">Noch nichts freigegeben. Hake in den Wildart-Tabs an, welche Wildarten und Klassen bei der Ansprache freigegeben werden.</p>`;
-  }else v.innerHTML=D.filter(w=>w.g===S.tab).map(art).join("")+NOTE;
+    v.innerHTML=l.length?srt(l).map(art).join("")+NOTE:`<p class="empty">Noch nichts freigegeben. Hake in den Wildart-Tabs an, welche Wildarten und Klassen bei der Ansprache freigegeben werden.</p>`;
+  }else v.innerHTML=srt(D.filter(w=>w.g===S.tab)).map(art).join("")+NOTE;
   const sync=()=>v.querySelectorAll("input.sp").forEach(i=>{const w=D.find(x=>x.n===i.dataset.s),c=w.r.filter(r=>S.free[key(w.n,r[0])]).length;i.checked=c===w.r.length;i.indeterminate=c>0&&c<w.r.length});
   sync();
   v.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{i.checked?S.free[i.dataset.k]=1:delete S.free[i.dataset.k];save();S.tab==="free"?render():sync()});
