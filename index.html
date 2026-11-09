@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3b4a2f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Jagdzeiten NRW</title>
+<style>
+:root{--bg:#e8ebe4;--card:#f6f7f2;--ink:#1d2419;--mute:#5d6856;--lod:#3b4a2f;--or:#f26a1b;--ok:#2f7d3a;--line:#c9d0c0}
+@media(prefers-color-scheme:dark){:root{--bg:#1c2219;--card:#262e22;--ink:#e6eadf;--mute:#9aa690;--lod:#2c3a22;--line:#3a4533}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{background:var(--lod);color:#fff;display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;position:sticky;top:0;z-index:5}
+h1{font:600 20px Georgia,serif;margin:0;flex:1}
+.dj{background:var(--or);color:#fff;border-radius:99px;padding:2px 10px;font-size:13px;display:none}
+body.dj-on .dj{display:inline}
+button,select,input[type=text]{font:inherit;color:inherit}
+#burger{background:none;border:0;color:#fff;font-size:26px;padding:0 4px}
+#menu{display:none;background:var(--card);border-bottom:2px solid var(--or);padding:12px 14px;position:sticky;top:52px;z-index:4}
+#menu.open{display:block}
+#menu label{display:flex;gap:10px;align-items:center;font-weight:600}
+#menu p{color:var(--mute);font-size:14px;margin:6px 0 10px}
+.btn{background:var(--lod);color:#fff;border:0;border-radius:8px;padding:8px 12px}
+.btn.alt{background:none;color:var(--ink);border:1px solid var(--line)}
+nav{display:flex;overflow-x:auto;gap:6px;padding:10px 12px 4px}
+nav button{flex:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+nav button.on{background:var(--lod);color:#fff;border-color:var(--lod)}
+nav .djtab{display:none}body.dj-on nav .djtab{display:block}
+main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
+.art{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:10px 0;padding:4px 12px 8px}
+.art h2{font:600 18px Georgia,serif;margin:8px 0 2px;display:flex;align-items:center;gap:10px}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row b{font-weight:600}.row small{color:var(--mute)}
+.chip{font-size:12px;border-radius:99px;padding:1px 8px;background:var(--line);color:var(--mute)}
+.chip.o{background:var(--ok);color:#fff}
+.bar{grid-column:2/4;display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.bar i{height:6px;border-radius:2px;background:var(--line)}.bar i.o{background:var(--ok)}
+.art input{width:22px;height:22px;accent-color:var(--or);display:none}
+body.dj-on .art input{display:block}
+body:not(.dj-on) .row{grid-template-columns:1fr auto}
+body:not(.dj-on) .bar{grid-column:1/3}
+.note{font-size:13px;color:var(--mute);margin:12px 2px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.ctl select,.ctl input{flex:1;min-width:120px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.empty{color:var(--mute);padding:20px 4px}
+</style>
+</head>
+<body>
+<header><button id="burger" aria-label="Menü">☰</button><h1>Jagdzeiten NRW</h1><span class="dj">Drückjagd</span></header>
+<div id="menu">
+  <label><input type="checkbox" id="djToggle"> Drückjagd-Modus</label>
+  <p>Zeigt Haken zum Freigeben bei der Ansprache sowie die Tabs „Freigegeben“ und „Notizbuch“.</p>
+  <button class="btn alt" id="resetFree">Freigaben zurücksetzen</button>
+</div>
+<nav id="tabs"></nav>
+<main id="view"></main>
+<script>
+// ===== DATEN: Landesjagdzeitenverordnung NRW (LJZeitVO), ohne Gewähr – vor der Jagd mit der gültigen Fassung abgleichen =====
+// Zeile: ["Klasse","von-bis[,von-bis]","Hinweis (optional)"]   T.M-T.M
+const Y="1.1-31.12";
+const SCHMAL="1.5-31.5",HERB="1.8-31.1";
+const D=[
+{g:"hw",n:"Rotwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
+{g:"hw",n:"Damwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
+{g:"hw",n:"Sikawild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
+{g:"hw",n:"Muffelwild",r:[["Widder",HERB],["Schafe",HERB],["Lämmer",HERB]]},
+{g:"hw",n:"Schwarzwild",r:[["Frischlinge",Y],["Überläufer",Y,"ganzjährig bis 31.1.2028, sonst 1.8.–31.1."],["Keiler",Y,"ganzjährig bis 31.1.2028, sonst 1.8.–31.1."],["Bachen",Y,"ganzjährig bis 31.1.2028; keine Jagdzeit für führende Bachen"]]},
+{g:"nh",n:"Rehwild",r:[["Böcke","1.5-31.1"],["Schmalrehe","1.5-31.5,1.9-31.1"],["Ricken","1.9-31.1"],["Kitze","1.9-31.1"]]},
+{g:"nh",n:"Feldhase",r:[["alle","16.10-31.12"]]},
+{g:"nh",n:"Wildkaninchen",r:[["alte","16.10-28.2"],["Jungkaninchen",Y]]},
+{g:"nh",n:"Fuchs",r:[["alte","16.7-28.2"],["Jungfüchse",Y]]},
+{g:"nh",n:"Dachs",r:[["alte","1.9-31.12"],["Welpen",Y]]},
+{g:"nh",n:"Waschbär",r:[["alte","1.8-28.2"],["Welpen",Y]]},
+{g:"nh",n:"Marderhund",r:[["alte","1.9-28.2"],["Welpen",Y]]},
+{g:"nh",n:"Steinmarder",r:[["alle","16.10-28.2"]]},
+{g:"nh",n:"Iltis",r:[["alle","16.10-28.2"]]},
+{g:"nh",n:"Mink",r:[["alle","16.10-28.2"]]},
+{g:"nh",n:"Hermelin",r:[["alle","1.9-28.2"]]},
+{g:"fw",n:"Fasan",r:[["alle","16.10-15.1"]]},
+{g:"fw",n:"Wildtruthahn",r:[["Hähne","16.3-30.4"]]},
+{g:"fw",n:"Stockente",r:[["alle","16.9-15.1"]]},
+{g:"fw",n:"Grau-/Kanada-/Nilgans",r:[["alle","16.7-31.1","in Schongebieten (Unterer Niederrhein, Weseraue) 15.10.–31.1. Schonzeit"],["juvenile Nilgänse",Y]]},
+{g:"fw",n:"Ringeltaube",r:[["alle","1.11-20.2"]]},
+{g:"fw",n:"Waldschnepfe",r:[["alle","16.10-15.1"]]},
+{g:"fw",n:"Höckerschwan",r:[["alle","1.11-20.2"]]},
+{g:"fw",n:"Rabenkrähe",r:[["alle","1.8-10.3"]]},
+{g:"fw",n:"Elster",r:[["alle","1.8-28.2"]]}
+];
+D.forEach(w=>w.r.forEach(r=>{if(r[0]==="alte")r[0]="alle"}));
+const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Hochwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
+// ===== Zustand =====
+let S={dj:false,free:{},marks:[],tab:"nh"};
+try{Object.assign(S,JSON.parse(localStorage.getItem("jz")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("jz",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pd=s=>{const[d,m]=s.split(".").map(Number);return m*100+d};
+const inR=(a,b,v)=>a<=b?v>=a&&v<=b:v>=a||v<=b;
+const rg=s=>s.split(",").map(x=>x.split("-"));
+const inAny=(s,v)=>rg(s).some(([a,b])=>inR(pd(a),pd(b),v));
+const now=new Date(),today=(now.getMonth()+1)*100+now.getDate();
+const fmt=s=>rg(s).map(([a,b])=>a==="1.1"&&b==="31.12"?"ganzjährig":a+". – "+b+".").join(" und ");
+const key=(n,l)=>n+"|"+l;
+function row(w,[l,s,note]){
+  const open=inAny(s,today),k=key(w.n,l);
+  let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${inAny(s,m*100+15)?"o":""}"></i>`;
+  const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
+  return `<div class="row">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${note?`<br><small>${esc(note)}</small>`:""}</div><span class="chip ${open?"o":""}">${open?"jagdbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
+}
+const art=w=>`<section class="art"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${w.r.map(r=>row(w,r)).join("")}</section>`;
+const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
+function render(){
+  document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
+  if(!S.dj&&(S.tab==="free"||S.tab==="book"))S.tab="nh";
+  $("tabs").innerHTML=TABS.map(([id,t,x])=>`<button data-t="${id}" class="${x?"djtab ":""}${S.tab===id?"on":""}">${t}</button>`).join("");
+  const v=$("view");
+  if(S.tab==="book")return book(v);
+  if(S.tab==="free"){
+    const l=D.map(w=>({...w,r:w.r.filter(r=>S.free[key(w.n,r[0])])})).filter(w=>w.r.length);
+    v.innerHTML=l.length?l.map(art).join("")+NOTE:`<p class="empty">Noch nichts freigegeben. Hake in den Wildart-Tabs an, welche Wildarten und Klassen bei der Ansprache freigegeben werden.</p>`;
+  }else v.innerHTML=D.filter(w=>w.g===S.tab).map(art).join("")+NOTE;
+  const sync=()=>v.querySelectorAll("input.sp").forEach(i=>{const w=D.find(x=>x.n===i.dataset.s),c=w.r.filter(r=>S.free[key(w.n,r[0])]).length;i.checked=c===w.r.length;i.indeterminate=c>0&&c<w.r.length});
+  sync();
+  v.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{i.checked?S.free[i.dataset.k]=1:delete S.free[i.dataset.k];save();S.tab==="free"?render():sync()});
+  v.querySelectorAll("input.sp").forEach(i=>i.onchange=()=>{const w=D.find(x=>x.n===i.dataset.s);w.r.forEach(r=>{const k=key(w.n,r[0]);i.checked?S.free[k]=1:delete S.free[k]});save();render()});
+}
+// ===== Notizbuch =====
+function book(v){
+  const names=Object.keys(S.free).map(k=>k.replace("|"," – "));
+  const opts=[...names,"Sonstiges"].map(n=>`<option>${esc(n)}</option>`).join("");
+  let g=`<circle r="100" fill="none"/>`;
+  [33,66,100].forEach((r,i)=>g+=`<circle r="${r}" fill="none" stroke="var(--line)" stroke-width="1"/><text x="2" y="${-r+9}" font-size="6" fill="var(--mute)">${50*(i+1)} m</text>`);
+  g+=`<path d="M-100 0H100M0-100V100" stroke="var(--line)" stroke-width=".6"/><text x="-3" y="-91" font-size="9" fill="var(--mute)">N</text>`;
+  g+=`<path d="M0-7L6 5H-6Z" fill="var(--lod)"/><text y="16" font-size="6" text-anchor="middle" fill="var(--ink)">Stand</text>`;
+  S.marks.forEach((m,i)=>g+=`<circle cx="${m.x}" cy="${m.y}" r="3.5" fill="var(--or)"/><text x="${m.x+5}" y="${m.y+2}" font-size="6.5" fill="var(--ink)">${esc(m.w)}${m.t?": "+esc(m.t):""}</text>`);
+  v.innerHTML=`<p class="note">Stand liegt in der Mitte. Tippe auf die Stelle, an der Wild beschossen wurde. Ringe = grobe Orientierung (50/100/150 m).</p>
+  <div class="ctl"><select id="bw">${opts}</select><input type="text" id="bt" placeholder="Notiz (z. B. Schweiß, Anschuss)"></div>
+  <svg id="sv" viewBox="-105 -105 210 210">${g}</svg>
+  <div class="ctl"><button class="btn alt" id="undo">Letzte entfernen</button><button class="btn alt" id="clr">Alle löschen</button></div>`;
+  $("sv").onclick=e=>{const r=e.currentTarget.getBoundingClientRect(),k=210/r.width;
+    S.marks.push({x:Math.round(((e.clientX-r.left)*k-105)*10)/10,y:Math.round(((e.clientY-r.top)*k-105)*10)/10,w:$("bw").value,t:$("bt").value.trim()});save();const w=$("bw").value,t=$("bt").value;book(v);$("bw").value=w;$("bt").value=t};
+  $("undo").onclick=()=>{S.marks.pop();save();book(v)};
+  $("clr").onclick=()=>{if(confirm("Alle Markierungen löschen?")){S.marks=[];save();book(v)}};
+}
+// ===== Events =====
+$("burger").onclick=()=>$("menu").classList.toggle("open");
+$("djToggle").onchange=e=>{S.dj=e.target.checked;save();render()};
+$("resetFree").onclick=()=>{if(confirm("Alle Freigaben zurücksetzen?")){S.free={};save();render()}};
+$("tabs").onclick=e=>{const t=e.target.dataset.t;if(t){S.tab=t;save();render()}};
+render();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
