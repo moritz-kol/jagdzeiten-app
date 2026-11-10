@@ -56,9 +56,9 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 Im **Burger-Menü** (oben links) lässt sich der Drückjagd-Modus einschalten.
 
 - **Freigaben bei der Ansprache:** neben jeder Wildart und jeder Klasse erscheint ein Haken. Die Haken an der Überschrift geben die komplette Wildart frei.
-- **Tab „Freigegeben“:** zeigt später nur noch das, was für die Jagd freigegeben wurde. Dort sind die Haken ausgeblendet, damit nichts versehentlich abgewählt wird.
+- **Tab „Freigegeben“:** zeigt später nur noch das, was für die Jagd freigegeben wurde. Dort sind die Haken ausgeblendet, damit nichts versehentlich abgewählt wird. Neben jeder Wildart und jeder Klasse gibt es einen **Notiz-Knopf** für Einschränkungen, z. B. „Rehböcke nur bis lauscherhoch“. Die Notiz steht danach direkt unter dem Eintrag.
 - Freigaben bleiben **gespeichert** und sind auch nach dem Schließen der App wieder abrufbar.
-- Im Burger-Menü lassen sich alle Freigaben mit einem Tipp **zurücksetzen**.
+- Im Burger-Menü lassen sich alle Freigaben samt Notizen mit einem Tipp **zurücksetzen**.
 
 ### 📍 Notizbuch (nur im Drückjagd-Modus)
 Ein Plan mit deinem **Stand in der Mitte** und Entfernungsringen bei **50, 100 und 150 m**.
@@ -111,6 +111,6 @@ In `sw.js` die Versionsnummer `V` erhöhen (z. B. `jagdzeiten-v12`), damit Handy
 ### Veröffentlichen mit GitHub Pages
 1. Alle Dateien in ein Repository hochladen
 2. **Settings → Pages**, Branch `main` und Ordner `/ (root)` wählen
-3. Nach ein bis zwei Minuten ist die App unter `https://<nutzername>.github.io/<repo>/` erreichbar
+3. Nach ein bis zwei Minuten ist die App unter `https://moritz-kol.github.io/jagdzeiten-app/` erreichbar
 
 GPS und Kompass funktionieren nur über **https**, also nicht, wenn `index.html` lokal als Datei geöffnet wird.
