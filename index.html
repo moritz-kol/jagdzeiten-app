@@ -104,7 +104,7 @@ const D=[
 D.forEach(w=>w.r.forEach(r=>{if(r[0]==="alte")r[0]="alle"}));
 const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Hochwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
 // ===== Zustand =====
-let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false};
+let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0};
 const COL={g:["#2f9e44","Anblick"],y:["#e6b400","Anschuss"],r:["#d13a2c","Tot"]};
 try{Object.assign(S,JSON.parse(localStorage.getItem("jz")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("jz",JSON.stringify(S))}catch(e){}};
@@ -131,7 +131,6 @@ function render(){
   document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
   if(!S.dj&&(S.tab==="free"||S.tab==="book"))S.tab="nh";
   $("tabs").innerHTML=TABS.map(([id,t,x])=>`<button data-t="${id}" class="${x?"djtab ":""}${S.tab===id?"on":""}">${t}</button>`).join("");
-  if(S.tab!=="book"&&compass)stopCompass();
   const v=$("view");v.classList.toggle("ro",S.tab==="free");
   if(S.tab==="book")return book(v);
   if(S.tab==="free"){
@@ -144,7 +143,7 @@ function render(){
   v.querySelectorAll("input.sp").forEach(i=>i.onchange=()=>{const w=D.find(x=>x.n===i.dataset.s);w.r.forEach(r=>{const k=key(w.n,r[0]);i.checked?S.free[k]=1:delete S.free[k]});save();render()});
 }
 // ===== Notizbuch =====
-let hd=0,lastHd=0,compass=false,gotHd=false;
+let hd=S.hd||0,samples=[],tmr;
 const M=1.5; // Meter pro Plan-Einheit (Ring 100 = 150 m)
 const ll=(x,y)=>S.pos?{lat:S.pos.lat-y*M/111320,lon:S.pos.lon+x*M/(111320*Math.cos(S.pos.lat*Math.PI/180))}:null;
 const f6=n=>n.toFixed(6),gm=(a,o)=>`https://www.google.com/maps?q=${f6(a)},${f6(o)}`;
@@ -159,11 +158,9 @@ const info=t=>{const e=$("gpsinfo");if(e)e.textContent=t};
 const gpsInfo=()=>info(S.pos?`Stand: ${f6(S.pos.lat)}, ${f6(S.pos.lon)} (±${S.pos.acc} m)`:"Noch kein Standort abgerufen.");
 function onO(e){
   const h=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.alpha!=null&&(e.absolute||e.type==="deviceorientationabsolute")?360-e.alpha:null);
-  if(h==null)return;gotHd=true;
-  if(Math.abs(((h-lastHd+540)%360)-180)<2)return;
-  lastHd=hd=h;const sv=$("sv");if(sv)sv.innerHTML=plan();
+  if(h!=null)samples.push(h);
 }
-function stopCompass(){compass=false;removeEventListener("deviceorientationabsolute",onO,true);removeEventListener("deviceorientation",onO,true);hd=lastHd=0;const sv=$("sv");if(sv)sv.innerHTML=plan()}
+const stopL=()=>{removeEventListener("deviceorientationabsolute",onO,true);removeEventListener("deviceorientation",onO,true)};
 function listHtml(){
   if(!S.list)return"";
   const t=ts=>ts?" · "+new Date(ts).toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):"";
@@ -175,8 +172,8 @@ function listHtml(){
 }
 function book(v){
   const opts=[...Object.keys(S.free).map(k=>k.replace("|"," – ")),"Sonstiges"].map(n=>`<option>${esc(n)}</option>`).join("");
-  v.innerHTML=`<p class="note">Rufe zuerst deinen Standort ab, dann wähle Wildart und Farbe und tippe auf die Stelle im Plan. Ringe = 50/100/150 m. Mit „Kompass“ dreht sich der Plan so, dass N nach Norden zeigt und oben deine Blickrichtung ist.</p>
-  <div class="ctl"><button class="btn" id="gps">Standort abrufen</button><button class="btn alt" id="cmp">${compass?"Kompass aus":"Kompass an"}</button></div>
+  v.innerHTML=`<p class="note">Rufe zuerst deinen Standort ab, dann wähle Wildart und Farbe und tippe auf die Stelle im Plan. Ringe = 50/100/150 m. Mit „Norden ausrichten“ hältst du das Handy flach, Oberkante in Blickrichtung: Der Plan dreht sich dabei einmalig so, dass N nach Norden zeigt und oben deine Blickrichtung ist.</p>
+  <div class="ctl"><button class="btn" id="gps">Standort abrufen</button><button class="btn alt" id="cmp">${hd?"Norden neu ausrichten":"Norden ausrichten"}</button>${hd?`<button class="btn alt" id="rst">Zurücksetzen</button>`:""}</div>
   <p class="note" id="gpsinfo"></p>
   <div class="ctl"><select id="bw">${opts}</select></div>
   <div class="cols">${Object.entries(COL).map(([c,[h,n]])=>`<button data-c="${c}" class="${S.col===c?"on":""}"><i style="background:${h}"></i>${n}</button>`).join("")}</div>
@@ -191,14 +188,18 @@ function book(v){
     navigator.geolocation.getCurrentPosition(p=>{S.pos={lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy)};save();gpsInfo();if(S.list)again()},()=>info("Standort nicht verfügbar – Freigabe und GPS prüfen."),{enableHighAccuracy:true,timeout:20000,maximumAge:0});
   };
   $("cmp").onclick=async()=>{
-    if(compass)stopCompass();
-    else{
-      try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)await DeviceOrientationEvent.requestPermission()}catch(e){}
-      compass=true;gotHd=false;addEventListener("deviceorientationabsolute",onO,true);addEventListener("deviceorientation",onO,true);
-      setTimeout(()=>{if(compass&&!gotHd)info("Kein Kompass-Signal – Sensor/Freigabe prüfen.")},2500);
-    }
-    again();
+    try{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)await DeviceOrientationEvent.requestPermission()}catch(e){}
+    samples=[];clearTimeout(tmr);info("Handy ruhig halten – misst 1–2 Sekunden …");
+    addEventListener("deviceorientationabsolute",onO,true);addEventListener("deviceorientation",onO,true);
+    tmr=setTimeout(()=>{
+      stopL();
+      if(!samples.length)return info("Kein Kompass-Signal – Sensor/Freigabe prüfen.");
+      const r=samples.reduce((q,h)=>[q[0]+Math.sin(h*Math.PI/180),q[1]+Math.cos(h*Math.PI/180)],[0,0]);
+      hd=S.hd=Math.round((Math.atan2(r[0],r[1])*180/Math.PI+360)%360)||0;save();
+      if(S.tab==="book")again();
+    },1500);
   };
+  if($("rst"))$("rst").onclick=()=>{hd=S.hd=0;save();again()};
   v.querySelectorAll(".cols button").forEach(b=>b.onclick=()=>{S.col=b.dataset.c;save();again()});
   $("sv").onclick=e=>{
     const r=e.currentTarget.getBoundingClientRect(),k=210/r.width,sx=(e.clientX-r.left)*k-105,sy=(e.clientY-r.top)*k-105,a=hd*Math.PI/180;
