@@ -58,8 +58,9 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
 </style>
 </head>
 <body>
-<header><button id="burger" aria-label="Menü">☰</button><h1>Jagdzeiten NRW</h1><span class="dj">Drückjagd</span></header>
+<header><button id="burger" aria-label="Menü">☰</button><h1 id="ttl">Jagdzeiten</h1><span class="dj">Drückjagd</span></header>
 <div id="menu">
+  <label style="display:block;margin-bottom:10px">Bundesland<select id="land" style="display:block;width:100%;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:inherit;font-weight:400"></select></label>
   <label><input type="checkbox" id="djToggle"> Drückjagd-Modus</label>
   <p>Zeigt Haken zum Freigeben bei der Ansprache sowie die Tabs „Freigegeben“ und „Notizbuch“.</p>
   <button class="btn alt" id="resetFree">Freigaben zurücksetzen</button>
@@ -71,7 +72,10 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
 // Zeile: ["Klasse","von-bis[,von-bis]","Hinweis (optional)"]   T.M-T.M
 const Y="1.1-31.12";
 const SCHMAL="1.5-31.5",HERB="1.8-31.1";
-const D=[
+const LAENDER=[["bw","Baden-Württemberg","BW"],["by","Bayern","BY"],["be","Berlin","BE"],["bb","Brandenburg","BB"],["hb","Bremen","HB"],["hh","Hamburg","HH"],["he","Hessen","HE"],["mv","Mecklenburg-Vorpommern","MV"],["ni","Niedersachsen","NI"],["nw","Nordrhein-Westfalen","NRW"],["rp","Rheinland-Pfalz","RP"],["sl","Saarland","SL"],["sn","Sachsen","SN"],["st","Sachsen-Anhalt","ST"],["sh","Schleswig-Holstein","SH"],["th","Thüringen","TH"]];
+// Pro Bundesland ein Eintrag; Bundesländer ohne Eintrag zeigen einen Hinweis. Neues Land: DATA.xx=[...] im selben Format ergänzen.
+const NOTES={nw:"Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten."};
+const DATA={nw:[
 {g:"hw",n:"Rotwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
 {g:"hw",n:"Damwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
 {g:"hw",n:"Sikawild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
@@ -100,13 +104,15 @@ const D=[
 {g:"fw",n:"Höckerschwan",r:[["alle","1.11-20.2"]]},
 {g:"fw",n:"Rabenkrähe",r:[["alle","1.8-10.3"]]},
 {g:"fw",n:"Elster",r:[["alle","1.8-28.2"]]}
-];
-D.forEach(w=>w.r.forEach(r=>{if(r[0]==="alte")r[0]="alle"}));
+]};
+Object.values(DATA).forEach(d=>d.forEach(w=>w.r.forEach(r=>{if(r[0]==="alte")r[0]="alle"})));
 const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Hochwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
 // ===== Zustand =====
-let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0};
+let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0,land:"nw"};
 const COL={g:["#2f9e44","Anblick"],y:["#e6b400","Anschuss"],r:["#d13a2c","Tot"]};
 try{Object.assign(S,JSON.parse(localStorage.getItem("jz")||"{}"))}catch(e){}
+if(!DATA[S.land]&&!LAENDER.some(l=>l[0]===S.land))S.land="nw";
+let D=DATA[S.land]||[];
 const save=()=>{try{localStorage.setItem("jz",JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -126,17 +132,19 @@ function row(w,[l,s,note,until]){
 const rOpen=([l,s,n,u])=>!(u&&now<=new Date(u+"T23:59:59"))&&inAny(s,today);
 const srt=l=>[...l].sort((a,b)=>b.r.some(rOpen)-a.r.some(rOpen));
 const art=w=>`<section class="art${w.r.some(rOpen)?"":" off"}"><h2><input type="checkbox" class="sp" data-s="${esc(w.n)}" aria-label="${esc(w.n)} komplett freigeben"><span>${esc(w.n)}</span></h2>${[...w.r].sort((a,b)=>rOpen(b)-rOpen(a)).map(r=>row(w,r)).join("")}</section>`;
-const NOTE=`<p class="note">Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten.</p>`;
+const note=()=>`<p class="note">${NOTES[S.land]||"Ohne Gewähr. Maßgeblich ist immer die gültige Landesjagdzeitenverordnung."}</p>`;
 function render(){
   document.body.classList.toggle("dj-on",S.dj);$("djToggle").checked=S.dj;
   if(!S.dj&&(S.tab==="free"||S.tab==="book"))S.tab="nh";
   $("tabs").innerHTML=TABS.map(([id,t,x])=>`<button data-t="${id}" class="${x?"djtab ":""}${S.tab===id?"on":""}">${t}</button>`).join("");
   const v=$("view");v.classList.toggle("ro",S.tab==="free");
+  const L=LAENDER.find(l=>l[0]===S.land);$("ttl").textContent="Jagdzeiten "+L[2];
+  if(!D.length&&S.tab!=="book"){v.innerHTML=`<p class="empty">Für ${L[1]} sind noch keine Jagdzeiten hinterlegt. Sie werden Bundesland für Bundesland nach dem jeweiligen Landesjagdgesetz bzw. der Landesjagdzeitenverordnung ergänzt.</p>`;return}
   if(S.tab==="book")return book(v);
   if(S.tab==="free"){
     const l=D.map(w=>({...w,r:w.r.filter(r=>S.free[key(w.n,r[0])])})).filter(w=>w.r.length);
-    v.innerHTML=l.length?srt(l).map(art).join("")+NOTE:`<p class="empty">Noch nichts freigegeben. Hake in den Wildart-Tabs an, welche Wildarten und Klassen bei der Ansprache freigegeben werden.</p>`;
-  }else v.innerHTML=srt(D.filter(w=>w.g===S.tab)).map(art).join("")+NOTE;
+    v.innerHTML=l.length?srt(l).map(art).join("")+note():`<p class="empty">Noch nichts freigegeben. Hake in den Wildart-Tabs an, welche Wildarten und Klassen bei der Ansprache freigegeben werden.</p>`;
+  }else v.innerHTML=srt(D.filter(w=>w.g===S.tab)).map(art).join("")+note();
   const sync=()=>v.querySelectorAll("input.sp").forEach(i=>{const w=D.find(x=>x.n===i.dataset.s),c=w.r.filter(r=>S.free[key(w.n,r[0])]).length;i.checked=c===w.r.length;i.indeterminate=c>0&&c<w.r.length});
   sync();
   v.querySelectorAll("input[data-k]").forEach(i=>i.onchange=()=>{i.checked?S.free[i.dataset.k]=1:delete S.free[i.dataset.k];save();S.tab==="free"?render():sync()});
@@ -212,6 +220,8 @@ function book(v){
   v.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>{try{navigator.clipboard.writeText(b.dataset.cp);b.textContent="Kopiert"}catch(e){}});
 }
 // ===== Events =====
+$("land").innerHTML=LAENDER.map(([i,n])=>`<option value="${i}">${n}${DATA[i]?"":" (noch ohne Daten)"}</option>`).join("");$("land").value=S.land;
+$("land").onchange=e=>{S.land=e.target.value;D=DATA[S.land]||[];save();$("menu").classList.remove("open");render()};
 $("burger").onclick=()=>$("menu").classList.toggle("open");
 $("djToggle").onchange=e=>{S.dj=e.target.checked;save();render()};
 $("resetFree").onclick=()=>{if(confirm("Alle Freigaben zurücksetzen?")){S.free={};save();render()}};

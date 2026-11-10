@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🦌 Jagdzeiten NRW
+# 🦌 Jagdzeiten
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/) 👈
+### 👉 [**Zur App: https://DEIN-NUTZERNAME.github.io/DEIN-REPO/**](https://DEIN-NUTZERNAME.github.io/DEIN-REPO/) 👈
 
 <sub>Den Link oben bitte durch die Adresse deiner GitHub-Pages-Seite ersetzen.</sub>
 
@@ -42,10 +42,11 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 
 ---
 
-## 🌿 Funktionen
+## ✨ Funktionen
 
 ### 🗓️ Jagdzeiten abrufen
-- Übersicht aller Wildarten nach **Landesjagdzeitenverordnung NRW**
+- **Bundesland-Auswahl** im Burger-Menü: Es werden nur die Wildarten und Zeiten des gewählten Landes nach dessen Landesjagdgesetz bzw. Landesjagdzeitenverordnung angezeigt
+- Aktuell hinterlegt: **Nordrhein-Westfalen**. Die übrigen Bundesländer sind in der Auswahl vorhanden und werden Schritt für Schritt ergänzt (bis dahin erscheint ein Hinweis)
 - Auswahl über Tabs: **Niederwild · Haar**, **Niederwild · Feder** und **Hochwild**
 - Pro Wildart alle **Klassen und Geschlechter** (z. B. Hirsche, Alttiere, Kälber, Schmalspießer, Schmaltiere) mit eigener Jagdzeit
 - **Tagesaktueller Status:** jede Zeile zeigt, ob das Wild heute *jagbar* ist oder *Schonzeit* hat
@@ -53,7 +54,7 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 - **Automatische Sortierung:** jagbares Wild steht oben, Wild in Schonzeit unten und ausgegraut – bei Wildarten und bei Klassen
 - Hinweise zu Sonderregelungen, z. B. Schwarzwild, Schongebiete bei Gänsen oder Rebhuhn mit Schonzeit bis 31.12.2027
 
-### 📯 Drückjagd-Modus
+### 🍔 Drückjagd-Modus
 Im **Burger-Menü** (oben links) lässt sich der Drückjagd-Modus einschalten.
 
 - **Freigaben bei der Ansprache:** neben jeder Wildart und jeder Klasse erscheint ein Haken. Die Haken an der Überschrift geben die komplette Wildart frei.
@@ -98,7 +99,7 @@ Die Angaben sind **ohne Gewähr**. Sie wurden aus der Landesjagdzeitenverordnung
 | `icon-192.png`, `icon-512.png` | App-Icons |
 
 ### Jagdzeiten ändern
-Die Daten stehen im Block `D` am Anfang des Skripts in `index.html`. Jede Zeile hat das Format:
+Die Daten stehen im Objekt `DATA` am Anfang des Skripts in `index.html`, je Bundesland ein Eintrag (`nw` = NRW). Ein weiteres Land wird als `DATA.xx=[…]` im selben Format ergänzt, der Hinweistext dazu steht in `NOTES`. Jede Zeile hat das Format:
 
 ```js
 ["Klasse", "von-bis", "Hinweis (optional)", "Schonzeit bis (optional, JJJJ-MM-TT)"]
