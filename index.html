@@ -55,6 +55,7 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
 .cols{display:flex;gap:8px;margin:8px 0}.cols button{flex:1;border:2px solid var(--line);border-radius:10px;background:var(--card);padding:10px 4px;display:flex;gap:8px;align-items:center;justify-content:center}.cols button.on{border-color:var(--ink);font-weight:600}.cols i{width:16px;height:16px;border-radius:50%;display:inline-block}
 .it{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:8px 0;padding:8px 12px}.it summary{cursor:pointer}.it i{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px}.it a{color:inherit;font-weight:600}.it p{margin:6px 0}#lst{width:100%;margin-top:6px}
 .nb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:1px 8px;margin-left:8px;font:400 13px system-ui,sans-serif;color:inherit}.nt{display:block;color:var(--ink);font-size:14px;margin:2px 0 4px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);width:min(92vw,440px);padding:16px}dialog::backdrop{background:#0008}dialog h3{margin:0 0 6px;font:600 18px Georgia,serif}#qrc{width:100%;image-rendering:pixelated;background:#fff;border-radius:8px}#cam{width:100%;border-radius:10px;margin:8px 0}dialog textarea{width:100%;font:12px monospace;background:var(--bg);color:inherit;border:1px solid var(--line);border-radius:8px;margin:8px 0}dialog ul{padding-left:18px;max-height:30vh;overflow:auto}
 .empty{color:var(--mute);padding:20px 4px}
 </style>
 </head>
@@ -65,9 +66,13 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
   <label><input type="checkbox" id="djToggle"> Drückjagd-Modus</label>
   <p>Zeigt Haken zum Freigeben bei der Ansprache sowie die Tabs „Freigegeben“ und „Notizbuch“.</p>
   <button class="btn alt" id="resetFree">Freigaben zurücksetzen</button>
+  <div class="ctl"><button class="btn alt" id="shareBtn">Freigaben teilen</button><button class="btn alt" id="impBtn">Freigaben importieren</button></div>
 </div>
 <nav id="tabs"></nav>
 <main id="view"></main>
+<dialog id="dlg"><div id="dbody"></div><div class="ctl"><button class="btn alt" id="dclose">Schließen</button></div></dialog>
+<script src="pako.min.js"></script>
+<script src="qr.js"></script>
 <script>
 // ===== DATEN: Landesjagdzeitenverordnung NRW (LJZeitVO), ohne Gewähr – vor der Jagd mit der gültigen Fassung abgleichen =====
 // Zeile: ["Klasse","von-bis[,von-bis]","Hinweis (optional)"]   T.M-T.M
@@ -300,6 +305,51 @@ function book(v){
   $("lst").onclick=()=>{S.list=!S.list;save();again()};
   v.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>{try{navigator.clipboard.writeText(b.dataset.cp);b.textContent="Kopiert"}catch(e){}});
 }
+// ===== Teilen (Export/Import per QR-Code oder Text, komplett offline) =====
+const b64=u=>btoa(String.fromCharCode(...u)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const unb64=t=>Uint8Array.from(atob(t.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+const enc=()=>"JZ1:"+b64(pako.deflateRaw(new TextEncoder().encode(JSON.stringify({l:S.land,f:Object.keys(S.free),n:S.notes}))));
+function dec(t){const i=t.indexOf("JZ1:");if(i<0)throw 0;const o=JSON.parse(new TextDecoder().decode(pako.inflateRaw(unb64(t.slice(i+4).replace(/\s/g,"")))));if(!Array.isArray(o.f)||o.f.some(k=>typeof k!=="string"))throw 0;return o}
+let stream,scanT,blob;
+const msg=t=>{const e=$("dmsg");if(e)e.textContent=t};
+const stopCam=()=>{clearInterval(scanT);if(stream)stream.getTracks().forEach(t=>t.stop());stream=null};
+function openDlg(h){$("dbody").innerHTML=h;$("menu").classList.remove("open");$("dlg").showModal()}
+function drawQR(q,sc){const n=q.getModuleCount(),c=$("qrc"),x=c.getContext("2d");c.width=c.height=(n+8)*sc;x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#000";for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+4)*sc,(r+4)*sc,sc,sc)}
+$("shareBtn").onclick=()=>{
+  if(!Object.keys(S.free).length)return openDlg("<h3>Freigaben teilen</h3><p>Es sind noch keine Freigaben gesetzt.</p>");
+  const code=enc();let q=null;try{q=makeQR(code,"M")}catch(e){}
+  openDlg(`<h3>Freigaben teilen</h3><p class="note">Andere scannen den Code unter „Freigaben importieren“ oder laden ihn als Bild bzw. Text.</p>${q?'<canvas id="qrc"></canvas>':'<p class="note">Zu viele Daten für einen QR-Code – bitte den Text-Code nutzen.</p>'}<textarea id="code" readonly rows="4">${code}</textarea><div class="ctl"><button class="btn" id="cpy">Code kopieren</button>${q?'<button class="btn alt" id="img">Als Bild speichern</button>':""}</div>`);
+  if(q){drawQR(q,8);blob=null;$("qrc").toBlob(b=>blob=b)}
+  $("cpy").onclick=()=>{try{navigator.clipboard.writeText(code);$("cpy").textContent="Kopiert"}catch(e){$("code").select()}};
+  if(q)$("img").onclick=async()=>{if(!blob)return;const f=new File([blob],"freigaben.png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]})}catch(e){}}
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="freigaben.png";a.click()}};
+};
+async function detectFrom(src){
+  if(window.BarcodeDetector){try{const r=await new BarcodeDetector({formats:["qr_code"]}).detect(src);if(r[0])return r[0].rawValue}catch(e){}}
+  if(window.jsQR){const w=src.videoWidth||src.width,h=src.videoHeight||src.height,c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.drawImage(src,0,0);const q=jsQR(x.getImageData(0,0,w,h).data,w,h);if(q)return q.data}
+  return null}
+const loadJs=()=>new Promise(r=>{if(window.jsQR||window.BarcodeDetector)return r();const s=document.createElement("script");s.src="jsQR.js";s.onload=s.onerror=()=>r();document.head.appendChild(s)});
+function handle(t){try{const o=dec(t.trim());stopCam();$("cam").hidden=true;msg("");preview(o)}catch(e){msg("Das ist kein gültiger Freigabe-Code.")}}
+function preview(o){
+  const L=LAENDER.find(l=>l[0]===o.l),valid=new Set((DATA[o.l]||[]).flatMap(w=>w.r.map(r=>key(w.n,r[0])))),notes=Object.fromEntries(Object.entries(o.n||{}).filter(([k,v])=>typeof v==="string")),nn=Object.keys(notes).length;
+  $("dres").innerHTML=`<p><b>${L?esc(L[1]):"Unbekanntes Bundesland"}</b>: ${o.f.length} Freigaben, ${nn} Notizen</p><ul>${o.f.map(k=>`<li>${esc(k.replace("|"," – "))}${valid.has(k)?"":" (nicht in der Datenbank)"}</li>`).join("")}${Object.entries(notes).map(([k,v])=>`<li>📝 ${esc(k.replace("|"," – "))}: ${esc(v)}</li>`).join("")}</ul><button class="btn" id="apply">Übernehmen</button><p class="note">Ersetzt deine aktuellen Freigaben und Notizen.</p>`;
+  $("apply").onclick=()=>{if(L)S.land=o.l;D=DATA[S.land]||[];S.free={};o.f.forEach(k=>S.free[k]=1);S.notes=notes;S.dj=true;S.tab="free";save();$("land").value=S.land;$("dlg").close();render()};
+}
+$("impBtn").onclick=()=>{
+  openDlg(`<h3>Freigaben importieren</h3><div class="ctl"><button class="btn" id="scan">Kamera scannen</button><label class="btn alt" style="cursor:pointer">Bild wählen<input type="file" id="pic" accept="image/*" hidden></label></div><video id="cam" playsinline muted hidden></video><textarea id="pin" rows="3" placeholder="Oder Text-Code hier einfügen (JZ1:…)"></textarea><button class="btn alt" id="chk">Code prüfen</button><p class="note" id="dmsg"></p><div id="dres"></div>`);
+  $("chk").onclick=()=>handle($("pin").value);
+  $("scan").onclick=async()=>{await loadJs();
+    if(!window.BarcodeDetector&&!window.jsQR)return msg("Scannen wird in diesem Browser nicht unterstützt. Bitte den Text-Code einfügen.");
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})}catch(e){return msg("Kein Kamerazugriff – bitte Zugriff erlauben.")}
+    const v=$("cam");v.srcObject=stream;v.hidden=false;await v.play();msg("Halte die Kamera auf den QR-Code …");
+    scanT=setInterval(async()=>{const t=await detectFrom(v);if(t)handle(t)},300)};
+  $("pic").onchange=async e=>{const f=e.target.files[0];if(!f)return;await loadJs();
+    if(!window.BarcodeDetector&&!window.jsQR)return msg("Bilder lesen wird in diesem Browser nicht unterstützt. Bitte den Text-Code einfügen.");
+    try{const t=await detectFrom(await createImageBitmap(f));t?handle(t):msg("Im Bild wurde kein QR-Code gefunden.")}catch(err){msg("Das Bild konnte nicht gelesen werden.")}};
+};
+$("dclose").onclick=()=>$("dlg").close();
+$("dlg").addEventListener("close",stopCam);
 // ===== Events =====
 $("land").innerHTML=LAENDER.map(([i,n])=>`<option value="${i}">${n}${DATA[i]?"":" (noch ohne Daten)"}</option>`).join("");$("land").value=S.land;
 $("land").onchange=e=>{S.land=e.target.value;D=DATA[S.land]||[];save();$("menu").classList.remove("open");render()};

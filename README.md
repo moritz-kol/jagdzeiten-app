@@ -4,7 +4,7 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=15) 👈
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=16) 👈
 
 ![PWA](https://img.shields.io/badge/PWA-offline%20nutzbar-3b4a2f)
 ![Land](https://img.shields.io/badge/Jagdzeiten-NRW-f26a1b)
@@ -60,6 +60,16 @@ Im **Burger-Menü** (oben links) lässt sich der Drückjagd-Modus einschalten.
 - Freigaben bleiben **gespeichert** und sind auch nach dem Schließen der App wieder abrufbar.
 - Im Burger-Menü lassen sich alle Freigaben samt Notizen mit einem Tipp **zurücksetzen**.
 
+### 📤 Freigaben teilen (komplett offline)
+Der Jagdleiter kann Freigaben samt Notizen vorab eingeben und an die Teilnehmer weitergeben. Beides liegt im **Burger-Menü** und stört den Rest der App nicht.
+
+- **Freigaben teilen:** erzeugt einen **QR-Code** und einen **Text-Code**. Den QR-Code kann man abfotografieren lassen, als **Bild speichern** und per Messenger verschicken oder direkt vom Display scannen lassen.
+- **Freigaben importieren:** per **Kamera scannen** (live vom anderen Handy), per **Bild wählen** (Screenshot oder Foto aus der Galerie) oder per **Text-Code einfügen**.
+- Vor dem Übernehmen zeigt die App, was importiert wird (Bundesland, Freigaben, Notizen). Beim Übernehmen werden die aktuellen Freigaben und Notizen ersetzt.
+- Alles läuft ohne Server und ohne Netz. Nachträgliche Änderungen brauchen einen neuen Code.
+
+> **Hinweis zum Scannen:** Kamera und Bild-Import nutzen die QR-Erkennung des Browsers (Chrome/Android). Auf Geräten ohne eingebaute Erkennung (z. B. iPhone) legst du zusätzlich die Datei `jsQR.js` ([jsQR, MIT-Lizenz](https://github.com/cozmo/jsQR)) ins Repository. Die App lädt sie dann automatisch und speichert sie für die Offline-Nutzung. Der Text-Code funktioniert immer.
+
 ### 📍 Notizbuch (nur im Drückjagd-Modus)
 Ein Plan mit deinem **Stand in der Mitte** und Entfernungsringen bei **50, 100 und 150 m**.
 
@@ -95,6 +105,9 @@ Die Angaben sind **ohne Gewähr**. Sie wurden aus der Landesjagdzeitenverordnung
 | `manifest.webmanifest` | Name, Farben und Icons für die Installation |
 | `sw.js` | Service Worker für die Offline-Nutzung |
 | `icon-192.png`, `icon-512.png` | App-Icons |
+| `qr.js` | QR-Code-Erzeugung (QRCode for JavaScript von Kazuhiko Arase, MIT) |
+| `pako.min.js` | Komprimierung der Freigabe-Codes (pako, MIT) |
+| `jsQR.js` | optional: QR-Erkennung für Browser ohne eingebaute Funktion |
 
 ### Jagdzeiten ändern
 Die Daten stehen im Objekt `DATA` am Anfang des Skripts in `index.html`, je Bundesland ein Eintrag (`nw` = NRW). Ein weiteres Land wird als `DATA.xx=[…]` im selben Format ergänzt, der Hinweistext dazu steht in `NOTES`. Jede Zeile hat das Format:
