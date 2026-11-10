@@ -73,9 +73,9 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
 // Zeile: ["Klasse","von-bis[,von-bis]","Hinweis (optional)"]   T.M-T.M
 const Y="1.1-31.12";
 const SCHMAL="1.5-31.5",HERB="1.8-31.1";
-const LAENDER=[["bw","Baden-Württemberg","BW"],["by","Bayern","BY"],["be","Berlin","BE"],["bb","Brandenburg","BB"],["hb","Bremen","HB"],["hh","Hamburg","HH"],["he","Hessen","HE"],["mv","Mecklenburg-Vorpommern","MV"],["ni","Niedersachsen","NI"],["nw","Nordrhein-Westfalen","NRW"],["rp","Rheinland-Pfalz","RP"],["sl","Saarland","SL"],["sn","Sachsen","SN"],["st","Sachsen-Anhalt","ST"],["sh","Schleswig-Holstein","SH"],["th","Thüringen","TH"]];
+const LAENDER=[["bw","Baden-Württemberg","BW"],["by","Bayern","BY"],["be","Berlin","BE"],["bb","Brandenburg","BB"],["hb","Bremen","HB"],["hh","Hamburg","HH"],["he","Hessen","HE"],["mv","Mecklenburg-Vorpommern","MV"],["ni","Niedersachsen","NI"],["nw","Nordrhein-Westfalen","NRW"],["rp","Rheinland-Pfalz","RLP"],["sl","Saarland","SL"],["sn","Sachsen","SN"],["st","Sachsen-Anhalt","ST"],["sh","Schleswig-Holstein","SH"],["th","Thüringen","TH"]];
 // Pro Bundesland ein Eintrag; Bundesländer ohne Eintrag zeigen einen Hinweis. Neues Land: DATA.xx=[...] im selben Format ergänzen.
-const NOTES={nw:"Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten."};
+const NOTES={ni:"DVO-NJagdG, konsolidierte Fassung Stand 6.10.2026, ohne Gewähr. Wolf (Schnellabschuss/Interventionsgebiet) ist nicht abgebildet. Abschusspläne, Rotwildgebiete und örtliche Regeln beachten.",rp:"Landesjagdverordnung RLP § 42 (Fassung 2013, gültig bis 31.3.2027), ohne Gewähr. Das neue Landesjagdgesetz vom 9.7.2025 gilt, eine angepasste LJVO liegt noch nicht vor – bitte aktuelle Fassung prüfen. Elterntierschutz (§ 32 Abs. 4 LJG) beachten.",by:"AVBayJG § 19, Übersicht des StMWi Stand 11/2026, ohne Gewähr. Bayern regelt Jagdzeiten allein nach Landesrecht. Abschusspläne und Vorgaben des Reviers beachten.",nw:"Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten."};
 const DATA={nw:[
 {g:"hw",n:"Rotwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
 {g:"hw",n:"Damwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
@@ -107,6 +107,84 @@ const DATA={nw:[
 {g:"fw",n:"Elster",r:[["alle","1.8-28.2"]]}
 ]};
 Object.values(DATA).forEach(d=>d.forEach(w=>w.r.forEach(r=>{if(r[0]==="alte")r[0]="alle"})));
+const H=(g,n,...r)=>({g,n,r}),MT="Elterntierschutz nach § 22 Abs. 4 BJagdG bleibt unberührt";
+{const A="1.8-31.1",B="1.9-31.1",SC="1.4-15.5,1.8-31.1",ED="Jungtiere ganzjährig",VS="In den Vogelschutzgebieten (Anlage zur DVO) nur bis 30.11.";
+DATA.ni=[
+H("hw","Rotwild",["Hirsche",A],["Alttiere",A],["Kälber",A],["Schmalspießer",SC],["Schmaltiere",SC]),
+H("hw","Damwild",["Hirsche",A],["Alttiere",B],["Kälber",B],["Schmalspießer",SC],["Schmaltiere",SC]),
+H("hw","Sikawild",["Hirsche",A],["Alttiere",B],["Kälber",B],["Schmalspießer",A],["Schmaltiere",A]),
+H("hw","Muffelwild",["Widder",A],["Schafe",A],["Lämmer",A],["Schmalschafe",A]),
+H("hw","Schwarzwild",["Keiler",Y,MT],["Bachen",Y,MT],["Überläufer",Y],["Frischlinge",Y]),
+H("nh","Rehwild",["Böcke","1.4-31.1"],["Schmalrehe","1.4-15.5,1.9-31.1"],["Ricken",B],["Kitze",B]),
+H("nh","Feldhase",["alle","1.10-31.12"]),
+H("nh","Wildkaninchen",["alle","1.10-15.2"],["Jungkaninchen",Y]),
+H("nh","Fuchs",["alle","16.6-28.2"],["Jungfüchse",Y]),
+H("nh","Dachs",["alle",A],["Jungdachse",Y]),
+H("nh","Steinmarder",["alle","16.9-28.2"]),H("nh","Baummarder",["alle","16.9-28.2"]),
+H("nh","Iltis",["alle","1.8-28.2"]),H("nh","Hermelin",["alle","1.8-28.2"]),
+H("nh","Waschbär",["alle","16.7-31.3"],["Jungtiere",Y]),
+H("nh","Marderhund",["alle","1.9-28.2"],["Jungtiere",Y]),
+H("nh","Mink",["alle","1.8-28.2"],["Jungtiere",Y]),
+H("nh","Nutria",["alle",Y]),
+H("fw","Rebhuhn",["alle","16.9-30.11"]),H("fw","Fasan",["alle","1.10-15.1"]),
+H("fw","Ringeltaube",["Alttauben","20.8-31.3","20.8.–31.10. und 21.2.–31.3. nur zur Schadensabwehr (Trupps auf Acker/Neueinsaaten)"],["Jungtauben",Y,"21.2.–31.3. nur zur Schadensabwehr"]),
+H("fw","Türkentaube",["alle","1.11-31.12"]),
+H("fw","Höckerschwan",["alle","1.11-20.2","nur zur Schadensabwehr (Trupps auf Acker/Neueinsaaten); in Vogelschutzgebieten nur 1.–30.11."]),
+H("fw","Graugans",["alle","16.7-15.2",VS]),H("fw","Kanadagans",["alle","16.7-15.2",VS]),
+H("fw","Nilgans",["alle","16.7-31.1"],["Jungtiere",Y]),
+H("fw","Nonnengans",["alle","1.8-15.1","nur mit artenschutzrechtlicher Ausnahmezulassung und Auflagen"]),
+H("fw","Stockente",["alle","1.9-15.1"]),H("fw","Pfeifente",["alle","1.10-15.1"]),H("fw","Krickente",["alle","1.10-15.1"]),
+H("fw","Waldschnepfe",["alle","16.10-31.12"]),H("fw","Blässhuhn",["alle","11.9-20.2"]),
+H("fw","Silbermöwe",["alle","1.10-10.2"]),
+H("fw","Rabenkrähe",["alle","1.8-20.2"]),H("fw","Elster",["alle","1.8-28.2"])];
+}
+{const A="1.8-31.1",M="1.5-31.1",B="1.9-31.1",GS="1.9.–31.10. zusätzlich zur Schadensabwehr auf gefährdeten landwirtschaftlichen Kulturen",U="1.8-28.2";
+DATA.rp=[
+H("hw","Rotwild",["Hirsche",A],["Alttiere",A],["Kälber",A],["Schmalspießer",M],["Schmaltiere",M]),
+H("hw","Damwild",["Hirsche",A],["Alttiere",A],["Kälber",A],["Schmalspießer",M],["Schmaltiere",M]),
+H("hw","Sikawild",["alle",Y]),
+H("hw","Muffelwild",["Widder",A],["Schafe",A],["Lämmer",A],["Schmalschafe",M],["Jährlinge",M]),
+H("hw","Schwarzwild",["alle",Y,"Untere Jagdbehörde kann Schonzeiten festsetzen; Elterntierschutz beachten"]),
+H("nh","Rehwild",["Böcke",M],["Schmalrehe",M],["Ricken",B],["Kitze",B]),
+H("nh","Feldhase",["alle","1.10-31.12"]),H("nh","Wildkaninchen",["alle",Y,"Untere Jagdbehörde kann Schonzeiten festsetzen"]),
+H("nh","Fuchs",["alle",U],["Jungfüchse",Y,"im gebotenen Umfang"]),
+H("nh","Dachs",["alle","1.8-31.12"],["Jungdachse",Y,"im gebotenen Umfang"]),
+H("nh","Steinmarder",["alle",U]),H("nh","Baummarder",["alle",U]),H("nh","Hermelin",["alle",U]),
+H("nh","Waschbär",["alle",U],["Jungtiere",Y]),H("nh","Marderhund",["alle",U],["Jungtiere",Y]),
+H("fw","Rebhuhn",["alle","1.9-31.10","nur in Jagdbezirken mit mehr als 3,0 Revierpaaren je 100 ha Offenland"]),
+H("fw","Fasan",["alle","1.10-15.1"]),H("fw","Wildtruthuhn",["alle","1.10-15.1"]),
+H("fw","Ringeltaube",["alle","1.11-20.2","Jungtauben auf gefährdeten Kulturen ganzjährig zur Schadensabwehr; Alttauben im Oktober nur mit Genehmigung"]),
+H("fw","Graugans",["alle","1.8-31.8,1.11-15.1",GS]),H("fw","Kanadagans",["alle","1.11-15.1",GS]),
+H("fw","Nilgans",["alle","1.11-15.1",GS],["Jungtiere",Y,"außerhalb von Vogelschutzgebieten"]),
+H("fw","Stockente",["alle","1.9-15.1"]),H("fw","Waldschnepfe",["alle","16.10-15.1"]),H("fw","Blässhuhn",["alle","11.9-15.1"]),
+H("fw","Rabenkrähe",["alle","1.8-20.2"]),H("fw","Elster",["alle","1.8-20.2"])];
+}
+{const KA="16.7-15.1",SD="1.9-31.1",SS="1.7-31.1",E="1.8-28.2",DM="1.5-15.1";
+DATA.by=[
+H("hw","Rotwild",["Hirsche","1.8-15.1"],["Alttiere",KA],["Kälber",KA],["Schmalspießer",DM],["Schmaltiere",DM]),
+H("hw","Damwild",["Hirsche",SD],["Alttiere",SD],["Kälber",SD],["Schmalspießer",SS],["Schmaltiere",SS]),
+H("hw","Sikawild",["Hirsche",SD],["Alttiere",SD],["Kälber",SD],["Schmalspießer",SS],["Schmaltiere",SS]),
+H("hw","Gamswild",["alle","1.8-15.12"]),H("hw","Muffelwild",["alle","1.8-31.1"]),H("hw","Schwarzwild",["alle",Y]),
+H("nh","Rehwild",["Böcke","16.4-15.10"],["Schmalrehe","16.4-15.1"],["Geißen","1.9-15.1"],["Kitze","1.9-15.1"]),
+H("nh","Feldhase",["alle","16.10-31.12"]),H("nh","Wildkaninchen",["alle",Y]),H("nh","Fuchs",["alle",Y]),
+H("nh","Steinmarder",["adulte",E],["juvenile","1.6-28.2"]),H("nh","Baummarder",["alle","16.10-28.2"]),
+H("nh","Iltis",["alle",E]),H("nh","Hermelin",["alle",E]),H("nh","Mauswiesel",["alle",E]),
+H("nh","Dachs",["adulte","1.8-31.1"],["juvenile","16.4-31.1"]),
+H("nh","Waschbär",["alle",Y]),H("nh","Marderhund",["alle",Y]),H("nh","Nutria",["alle",Y]),H("nh","Mink",["alle",Y]),
+H("fw","Rebhuhn",["alle","1.9-31.10"]),H("fw","Fasan",["alle","1.10-31.10"]),
+H("fw","Wildtruthahn",["alle","15.3-15.5,1.10-15.1"]),H("fw","Wildtruthenne",["alle","1.10-15.1"]),
+H("fw","Ringeltaube",["alle","1.11-20.2","zusätzlich zur Schadensabwehr: Alttauben 21.2.–31.3. und 20.8.–31.10., Jungtauben 21.2.–31.10. (Trupps ab 3 Tieren auf Acker/Neueinsaaten)"]),
+H("fw","Türkentaube",["alle","1.11-20.2"]),H("fw","Höckerschwan",["alle","1.11-20.2"]),
+H("fw","Graugans",["alle",E,"juvenile, sitzende Tiere zusätzlich im Juli"]),H("fw","Kanadagans",["alle",E,"juvenile, sitzende Tiere zusätzlich im Juli"]),
+H("fw","Nilgans",["alle",Y]),H("fw","Rostgans",["adulte","1.9-28.2"],["juvenile",Y]),
+H("fw","Blässgans",["alle","1.11-15.1"]),H("fw","Saatgans",["alle","1.11-15.1"]),H("fw","Ringelgans",["alle","1.11-15.1"]),
+H("fw","Stockente",["alle","1.9-15.1"]),
+H("fw","Pfeif-, Krick-, Spieß-, Berg-, Reiher-, Tafel-, Samt- und Trauerente",["alle","1.10-15.1"]),
+H("fw","Waldschnepfe",["alle","16.10-15.1"]),H("fw","Blässhuhn",["alle","11.9-20.2"]),
+H("fw","Möwen (Lach-, Sturm-, Silber-, Mantel-, Heringsmöwe)",["alle","1.10-10.2"]),
+H("fw","Eichelhäher, Elster, Raben- und Nebelkrähe",["alle","16.7-14.2"]),
+H("fw","Graureiher",["alle","16.9-31.10","nur im Umkreis von 200 m um geschlossene Gewässer"])];
+}
 const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Hochwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
 // ===== Zustand =====
 let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0,land:"nw",notes:{}};
