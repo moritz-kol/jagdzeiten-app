@@ -4,9 +4,7 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://DEIN-NUTZERNAME.github.io/DEIN-REPO/**](https://DEIN-NUTZERNAME.github.io/DEIN-REPO/) 👈
-
-<sub>Den Link oben bitte durch die Adresse deiner GitHub-Pages-Seite ersetzen.</sub>
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/) 👈
 
 ![PWA](https://img.shields.io/badge/PWA-offline%20nutzbar-3b4a2f)
 ![Land](https://img.shields.io/badge/Jagdzeiten-NRW-f26a1b)
