@@ -4,7 +4,7 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=14) 👈
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=15) 👈
 
 ![PWA](https://img.shields.io/badge/PWA-offline%20nutzbar-3b4a2f)
 ![Land](https://img.shields.io/badge/Jagdzeiten-NRW-f26a1b)
@@ -40,19 +40,19 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 
 ---
 
-## ✨ Funktionen
+## 🌱 Funktionen
 
 ### 🗓️ Jagdzeiten abrufen
 - **Bundesland-Auswahl** im Burger-Menü: Es werden nur die Wildarten und Zeiten des gewählten Landes nach dessen Landesjagdgesetz bzw. Landesjagdzeitenverordnung angezeigt
 - Aktuell hinterlegt: **Nordrhein-Westfalen, Niedersachsen, Rheinland-Pfalz und Bayern**. Die übrigen Bundesländer sind in der Auswahl vorhanden und werden Schritt für Schritt ergänzt (bis dahin erscheint ein Hinweis)
-- Auswahl über Tabs: **Niederwild · Haar**, **Niederwild · Feder** und **Hochwild**
+- Auswahl über Tabs: **Niederwild · Haar**, **Niederwild · Feder** und **Schalenwild**
 - Pro Wildart alle **Klassen und Geschlechter** (z. B. Hirsche, Alttiere, Kälber, Schmalspießer, Schmaltiere) mit eigener Jagdzeit
 - **Tagesaktueller Status:** jede Zeile zeigt, ob das Wild heute *jagbar* ist oder *Schonzeit* hat
 - **Jahresbalken** (Januar bis Dezember) auf einen Blick
 - **Automatische Sortierung:** jagbares Wild steht oben, Wild in Schonzeit unten und ausgegraut – bei Wildarten und bei Klassen
 - Hinweise zu Sonderregelungen, z. B. Schwarzwild, Schongebiete bei Gänsen oder Rebhuhn mit Schonzeit bis 31.12.2027
 
-### 🍔 Drückjagd-Modus
+### 📯 Drückjagd-Modus
 Im **Burger-Menü** (oben links) lässt sich der Drückjagd-Modus einschalten.
 
 - **Freigaben bei der Ansprache:** neben jeder Wildart und jeder Klasse erscheint ein Haken. Die Haken an der Überschrift geben die komplette Wildart frei.
