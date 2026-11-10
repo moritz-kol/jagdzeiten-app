@@ -4,7 +4,7 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://DEIN-NUTZERNAME.github.io/DEIN-REPO/**](https://DEIN-NUTZERNAME.github.io/DEIN-REPO/) 👈
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/) 👈
 
 <sub>Den Link oben bitte durch die Adresse deiner GitHub-Pages-Seite ersetzen.</sub>
 
@@ -42,7 +42,7 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 
 ---
 
-## ✨ Funktionen
+## 🌿 Funktionen
 
 ### 🗓️ Jagdzeiten abrufen
 - Übersicht aller Wildarten nach **Landesjagdzeitenverordnung NRW**
@@ -53,7 +53,7 @@ Neue Versionen werden automatisch geladen, sobald die App mit Netz geöffnet wir
 - **Automatische Sortierung:** jagbares Wild steht oben, Wild in Schonzeit unten und ausgegraut – bei Wildarten und bei Klassen
 - Hinweise zu Sonderregelungen, z. B. Schwarzwild, Schongebiete bei Gänsen oder Rebhuhn mit Schonzeit bis 31.12.2027
 
-### 🍔 Drückjagd-Modus
+### 📯 Drückjagd-Modus
 Im **Burger-Menü** (oben links) lässt sich der Drückjagd-Modus einschalten.
 
 - **Freigaben bei der Ansprache:** neben jeder Wildart und jeder Klasse erscheint ein Haken. Die Haken an der Überschrift geben die komplette Wildart frei.
