@@ -56,6 +56,7 @@ svg{width:100%;touch-action:manipulation;background:var(--card);border:1px solid
 .it{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:8px 0;padding:8px 12px}.it summary{cursor:pointer}.it i{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px}.it a{color:inherit;font-weight:600}.it p{margin:6px 0}#lst{width:100%;margin-top:6px}
 .nb{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:1px 8px;margin-left:8px;font:400 13px system-ui,sans-serif;color:inherit}.nt{display:block;color:var(--ink);font-size:14px;margin:2px 0 4px}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);width:min(92vw,440px);padding:16px}dialog::backdrop{background:#0008}dialog h3{margin:0 0 6px;font:600 18px Georgia,serif}#qrc{width:100%;image-rendering:pixelated;background:#fff;border-radius:8px}#cam{width:100%;border-radius:10px;margin:8px 0}dialog textarea{width:100%;font:12px monospace;background:var(--bg);color:inherit;border:1px solid var(--line);border-radius:8px;margin:8px 0}dialog ul{padding-left:18px;max-height:30vh;overflow:auto}
+.chgd{color:var(--or);font-size:12px;margin-left:6px}.ovr{display:grid;grid-template-columns:1fr 1.3fr auto;gap:6px;align-items:center;margin:6px 0}.ovr input{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:inherit;font:14px system-ui,sans-serif;min-width:0}.ovr.chg input{border-color:var(--or)}.ovr .rs{padding:4px 10px}.ovr .rs[hidden]{display:inline-block;visibility:hidden}#ovl{max-height:55vh;overflow:auto}#ovl summary b,#ovl summary{font-weight:600}
 .empty{color:var(--mute);padding:20px 4px}
 </style>
 </head>
@@ -67,6 +68,7 @@ dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);co
   <p>Zeigt Haken zum Freigeben bei der Ansprache sowie die Tabs „Freigegeben“ und „Notizbuch“.</p>
   <button class="btn alt" id="resetFree">Freigaben zurücksetzen</button>
   <div class="ctl"><button class="btn alt" id="shareBtn">Freigaben teilen</button><button class="btn alt" id="impBtn">Freigaben importieren</button></div>
+  <div class="ctl"><button class="btn alt" id="ovBtn">Jagdzeiten anpassen</button></div>
 </div>
 <nav id="tabs"></nav>
 <main id="view"></main>
@@ -243,26 +245,26 @@ H("fw","Aaskrähe",["alle","16.7-28.2"]),H("fw","Elster",["alle","16.7-28.2"])];
 }
 const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Schalenwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
 // ===== Zustand =====
-let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0,land:"nw",notes:{}};
+let S={dj:false,free:{},marks:[],tab:"nh",col:"g",pos:null,list:false,hd:0,land:"nw",notes:{},ov:{}};
 const COL={g:["#2f9e44","Anblick"],y:["#e6b400","Anschuss"],r:["#d13a2c","Tot"]};
 try{Object.assign(S,JSON.parse(localStorage.getItem("jz")||"{}"))}catch(e){}
 if(!DATA[S.land]&&!LAENDER.some(l=>l[0]===S.land))S.land="nw";
-let D=DATA[S.land]||[];
+let D=[];
 const save=()=>{try{localStorage.setItem("jz",JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const pd=s=>{const[d,m]=s.split(".").map(Number);return m*100+d};
 const inR=(a,b,v)=>a<=b?v>=a&&v<=b:v>=a||v<=b;
-const rg=s=>s.split(",").map(x=>x.split("-"));
+const rg=s=>s==="none"?[]:s.split(",").map(x=>x.split("-"));
 const inAny=(s,v)=>rg(s).some(([a,b])=>inR(pd(a),pd(b),v));
 const now=new Date(),today=(now.getMonth()+1)*100+now.getDate();
-const fmt=s=>rg(s).map(([a,b])=>a==="1.1"&&b==="31.12"?"ganzjährig":a+". – "+b+".").join(" und ");
+const fmt=s=>s==="none"?"keine Jagdzeit":rg(s).map(([a,b])=>a==="1.1"&&b==="31.12"?"ganzjährig":a+". – "+b+".").join(" und ");
 const key=(n,l)=>n+"|"+l;
-function row(w,[l,s,note,until]){
+function row(w,[l,s,note,until,ch]){
   const lock=until&&now<=new Date(until+"T23:59:59"),open=!lock&&inAny(s,today),k=key(w.n,l);
   let bar="";for(let m=1;m<=12;m++)bar+=`<i class="${!lock&&inAny(s,m*100+15)?"o":""}"></i>`;
   const cb=w.r.length>1?`<input type="checkbox" data-k="${esc(k)}" ${S.free[k]?"checked":""} aria-label="${esc(w.n+" "+l)} freigegeben">`:"<span></span>";
-  return `<div class="row${open?"":" off"}">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${S.tab==="free"?nbtn(k):""}${note?`<br><small>${esc(note)}</small>`:""}${S.tab==="free"&&S.notes[k]?`<span class="nt">📝 ${esc(S.notes[k])}</span>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
+  return `<div class="row${open?"":" off"}">${cb}<div><b>${esc(l)}</b> <small>${fmt(s)}</small>${ch?`<small class="chgd">geändert</small>`:""}${S.tab==="free"?nbtn(k):""}${note?`<br><small>${esc(note)}</small>`:""}${S.tab==="free"&&S.notes[k]?`<span class="nt">📝 ${esc(S.notes[k])}</span>`:""}</div><span class="chip ${open?"o":""}">${open?"jagbar":"Schonzeit"}</span><div class="bar">${bar}</div></div>`;
 }
 const rOpen=([l,s,n,u])=>!(u&&now<=new Date(u+"T23:59:59"))&&inAny(s,today);
 const srt=l=>[...l].sort((a,b)=>b.r.some(rOpen)-a.r.some(rOpen));
@@ -386,7 +388,7 @@ function handle(t){try{const o=dec(t.trim());stopCam();$("cam").hidden=true;msg(
 function preview(o){
   const L=LAENDER.find(l=>l[0]===o.l),valid=new Set((DATA[o.l]||[]).flatMap(w=>w.r.map(r=>key(w.n,r[0])))),notes=Object.fromEntries(Object.entries(o.n||{}).filter(([k,v])=>typeof v==="string")),nn=Object.keys(notes).length;
   $("dres").innerHTML=`<p><b>${L?esc(L[1]):"Unbekanntes Bundesland"}</b>: ${o.f.length} Freigaben, ${nn} Notizen</p><ul>${o.f.map(k=>`<li>${esc(k.replace("|"," – "))}${valid.has(k)?"":" (nicht in der Datenbank)"}</li>`).join("")}${Object.entries(notes).map(([k,v])=>`<li>📝 ${esc(k.replace("|"," – "))}: ${esc(v)}</li>`).join("")}</ul><button class="btn" id="apply">Übernehmen</button><p class="note">Ersetzt deine aktuellen Freigaben und Notizen.</p>`;
-  $("apply").onclick=()=>{if(L)S.land=o.l;D=DATA[S.land]||[];S.free={};o.f.forEach(k=>S.free[k]=1);S.notes=notes;S.dj=true;S.tab="free";save();$("land").value=S.land;$("dlg").close();render()};
+  $("apply").onclick=()=>{if(L)S.land=o.l;D=getD();S.free={};o.f.forEach(k=>S.free[k]=1);S.notes=notes;S.dj=true;S.tab="free";save();$("land").value=S.land;$("dlg").close();render()};
 }
 $("impBtn").onclick=()=>{
   openDlg(`<h3>Freigaben importieren</h3><div class="ctl"><button class="btn" id="scan">Kamera scannen</button><label class="btn alt" style="cursor:pointer">Bild wählen<input type="file" id="pic" accept="image/*" hidden></label></div><video id="cam" playsinline muted hidden></video><textarea id="pin" rows="3" placeholder="Oder Text-Code hier einfügen (JZ1:…)"></textarea><div class="ctl"><button class="btn alt" id="clip">Aus Zwischenablage einfügen</button><button class="btn alt" id="chk">Code prüfen</button></div><p class="note" id="dmsg"></p><div id="dres"></div>`);
@@ -403,14 +405,37 @@ $("impBtn").onclick=()=>{
 };
 $("dclose").onclick=()=>$("dlg").close();
 $("dlg").addEventListener("close",stopCam);
+// ===== Eigene Jagdzeiten (Anpassungen je Bundesland, nur auf diesem Gerät) =====
+const clone=d=>d.map(w=>({...w,r:w.r.map(r=>[...r])}));
+function getD(){const d=clone(DATA[S.land]||[]),o=(S.ov||{})[S.land]||{};d.forEach(w=>w.r.forEach(r=>{const k=key(w.n,r[0]);if(o[k]!==undefined){r[1]=o[k];r[3]=undefined;r[4]=true}}));return d}
+const normRg=t=>{t=t.trim().toLowerCase();if(t==="keine"||t==="geschont")return"none";if(t==="ganzjährig"||t==="ganzjaehrig")return Y;
+  t=t.replace(/\s/g,"").replace(/[–—]/g,"-").replace(/\.(?=[-,]|$)/g,"");
+  return t.split(",").every(p=>{const m=p.match(/^(\d{1,2})\.(\d{1,2})-(\d{1,2})\.(\d{1,2})$/);return m&&+m[1]>=1&&+m[1]<=31&&+m[3]>=1&&+m[3]<=31&&+m[2]>=1&&+m[2]<=12&&+m[4]>=1&&+m[4]<=12})?t:null};
+const rtxt=s=>s==="none"?"keine":s===Y?"ganzjährig":s;
+$("ovBtn").onclick=()=>{
+  const base=DATA[S.land]||[];
+  if(!base.length)return openDlg("<h3>Jagdzeiten anpassen</h3><p>Für dieses Bundesland sind noch keine Jagdzeiten hinterlegt.</p>");
+  const o=(S.ov[S.land]||{}),og={};base.forEach(w=>w.r.forEach(r=>og[key(w.n,r[0])]=r[1]));
+  const L=LAENDER.find(l=>l[0]===S.land)[1];
+  openDlg(`<h3>Jagdzeiten anpassen</h3><p class="note">${esc(L)}: Zeitraum als „1.8-31.1“, mehrere mit Komma („1.5-31.5,1.9-31.1“), außerdem „ganzjährig“ oder „keine“ (Schonzeit). Änderungen gelten nur auf diesem Gerät und werden in der Liste als „geändert“ markiert.</p><div id="ovl">${base.map(w=>`<details class="it"><summary>${esc(w.n)} <small class="cnt"></small></summary>${w.r.map(r=>{const k=key(w.n,r[0]),c=o[k]!==undefined;return `<div class="ovr${c?" chg":""}" data-k="${esc(k)}"><b>${esc(r[0])}</b><input type="text" value="${esc(rtxt(c?o[k]:r[1]))}" aria-label="Jagdzeit ${esc(w.n+" "+r[0])}"><button class="btn alt rs" ${c?"":"hidden"} title="Zurücksetzen">↺</button></div>`}).join("")}</details>`).join("")}</div><div class="ctl"><button class="btn alt" id="ovAll">Alle Änderungen zurücksetzen</button></div>`);
+  const upd=()=>$("ovl").querySelectorAll("details").forEach(d=>{const n=d.querySelectorAll(".chg").length;d.querySelector(".cnt").textContent=n?`(${n} geändert)`:""});
+  const set=(row,v)=>{const k=row.dataset.k,m=S.ov[S.land]=S.ov[S.land]||{};if(v===og[k])delete m[k];else m[k]=v;if(!Object.keys(m).length)delete S.ov[S.land];save();D=getD();render();
+    const c=(S.ov[S.land]||{})[k]!==undefined;row.classList.toggle("chg",c);row.querySelector(".rs").hidden=!c;row.querySelector("input").value=rtxt(c?S.ov[S.land][k]:og[k]);upd()};
+  $("ovl").onchange=e=>{const row=e.target.closest(".ovr");if(!row)return;const v=normRg(e.target.value),k=row.dataset.k;
+    if(v===null){alert("Ungültiges Format. Beispiel: 1.8-31.1 oder 1.5-31.5,1.9-31.1");const c=(S.ov[S.land]||{})[k];e.target.value=rtxt(c!==undefined?c:og[k]);return}
+    set(row,v)};
+  $("ovl").onclick=e=>{const b=e.target.closest(".rs");if(b)set(b.closest(".ovr"),og[b.closest(".ovr").dataset.k])};
+  $("ovAll").onclick=()=>{if(confirm("Alle Änderungen für "+L+" zurücksetzen?")){delete S.ov[S.land];save();D=getD();render();$("dlg").close();$("ovBtn").onclick()}};
+  upd();
+};
 // ===== Events =====
 $("land").innerHTML=LAENDER.map(([i,n])=>`<option value="${i}">${n}${DATA[i]?"":" (noch ohne Daten)"}</option>`).join("");$("land").value=S.land;
-$("land").onchange=e=>{S.land=e.target.value;D=DATA[S.land]||[];save();$("menu").classList.remove("open");render()};
+$("land").onchange=e=>{S.land=e.target.value;D=getD();save();$("menu").classList.remove("open");render()};
 $("burger").onclick=()=>$("menu").classList.toggle("open");
 $("djToggle").onchange=e=>{S.dj=e.target.checked;save();render()};
 $("resetFree").onclick=()=>{if(confirm("Alle Freigaben und Notizen zurücksetzen?")){S.free={};S.notes={};save();render()}};
 $("tabs").onclick=e=>{const t=e.target.dataset.t;if(t){S.tab=t;save();render()}};
-render();
+D=getD();render();
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>

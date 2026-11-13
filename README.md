@@ -4,7 +4,7 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=19) 👈
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=20) 👈
 
 ![PWA](https://img.shields.io/badge/PWA-offline%20nutzbar-3b4a2f)
 ![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-555)
@@ -39,6 +39,7 @@ Die App ist eine Web-App (PWA). Einmal zum Home-Bildschirm hinzugefügt, startet
 - **Tagesaktueller Status** je Zeile: *jagbar* oder *Schonzeit*, dazu ein **Jahresbalken** (Januar bis Dezember).
 - **Automatische Sortierung:** Jagbares steht oben, Schonzeit unten und ausgegraut, bei Wildarten und bei Klassen.
 - Hinweise zu Sonderregelungen direkt an der Zeile, z. B. Elterntierschutz, Schadensabwehr oder Schongebiete.
+- **Eigene Anpassungen:** Im Burger-Menü unter „Jagdzeiten anpassen“ lassen sich abweichende Jagdzeiten je Wildart und Klasse eintragen, z. B. bei örtlichen Regelungen. Geänderte Zeilen sind in der Liste als „geändert“ markiert und lassen sich einzeln oder alle auf einmal zurücksetzen. Die Anpassungen gelten nur auf dem eigenen Gerät.
 
 ### 📯 Drückjagd-Modus
 Im **Burger-Menü** einschaltbar.

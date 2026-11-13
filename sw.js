@@ -1,5 +1,5 @@
 // Bei Änderungen an Dateien die Versionsnummer erhöhen, damit der Cache erneuert wird.
-const V = "jagdzeiten-v19";
+const V = "jagdzeiten-v20";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "pako.min.js", "qr.js"];
 self.addEventListener("install", e => {
   // jsQR.js ist optional (Kamera-/Bild-Scan auf Geräten ohne eingebaute QR-Erkennung)
