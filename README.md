@@ -4,11 +4,11 @@
 
 **Jagdzeiten, Drückjagd-Freigaben und Streckennotizen – direkt auf dem Handy, auch ohne Netz.**
 
-### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=17) 👈
+### 👉 [**Zur App: https://moritz-kol.github.io/jagdzeiten-app/**](https://moritz-kol.github.io/jagdzeiten-app/?v=19) 👈
 
 ![PWA](https://img.shields.io/badge/PWA-offline%20nutzbar-3b4a2f)
 ![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-555)
-![Länder](https://img.shields.io/badge/Bundesl%C3%A4nder-NRW%20%C2%B7%20NI%20%C2%B7%20RLP%20%C2%B7%20BY-f26a1b)
+![Länder](https://img.shields.io/badge/Bundesl%C3%A4nder-BW%20%C2%B7%20BY%20%C2%B7%20NI%20%C2%B7%20NRW%20%C2%B7%20RLP%20%C2%B7%20ST-f26a1b)
 
 </div>
 
@@ -31,7 +31,7 @@ Die App ist eine Web-App (PWA). Einmal zum Home-Bildschirm hinzugefügt, startet
 
 ---
 
-## 🌱 Funktionen
+## 🌿 Funktionen
 
 ### 🗓️ Jagdzeiten
 - **Bundesland-Auswahl** im Burger-Menü: Angezeigt werden nur die Wildarten und Zeiten des gewählten Landes (Landesjagdgesetz bzw. Landesjagdzeitenverordnung).
@@ -77,10 +77,12 @@ Plan mit dem **Stand in der Mitte** und Ringen bei **50, 100 und 150 m**.
 
 | Land | Quelle |
 |---|---|
+| Baden-Württemberg | DVO JWMG § 10, Fassung vom 13.1.2026 (GBl. 2026 Nr. 1) |
 | Nordrhein-Westfalen | Landesjagdzeitenverordnung NRW |
 | Niedersachsen | DVO-NJagdG, konsolidierte Fassung Stand 6.10.2026 |
 | Rheinland-Pfalz | Landesjagdverordnung (LJVO) § 42, Hinweis auf neues Landesjagdgesetz 2025 |
 | Bayern | AVBayJG § 19, Übersicht des StMWi Stand 11/2026 |
+| Sachsen-Anhalt | Übersicht des LJV Sachsen-Anhalt (JagdZeitV, § 19 LJagdG-DVO), Rehwild-Verordnung des LVwA 2017 |
 
 Die übrigen Bundesländer sind in der Auswahl vorhanden und werden nach und nach ergänzt. Bis dahin erscheint ein Hinweis.
 

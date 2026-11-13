@@ -80,7 +80,7 @@ const Y="1.1-31.12";
 const SCHMAL="1.5-31.5",HERB="1.8-31.1";
 const LAENDER=[["bw","Baden-Württemberg","BW"],["by","Bayern","BY"],["be","Berlin","BE"],["bb","Brandenburg","BB"],["hb","Bremen","HB"],["hh","Hamburg","HH"],["he","Hessen","HE"],["mv","Mecklenburg-Vorpommern","MV"],["ni","Niedersachsen","NI"],["nw","Nordrhein-Westfalen","NRW"],["rp","Rheinland-Pfalz","RLP"],["sl","Saarland","SL"],["sn","Sachsen","SN"],["st","Sachsen-Anhalt","ST"],["sh","Schleswig-Holstein","SH"],["th","Thüringen","TH"]];
 // Pro Bundesland ein Eintrag; Bundesländer ohne Eintrag zeigen einen Hinweis. Neues Land: DATA.xx=[...] im selben Format ergänzen.
-const NOTES={ni:"DVO-NJagdG, konsolidierte Fassung Stand 6.10.2026, ohne Gewähr. Wolf (Schnellabschuss/Interventionsgebiet) ist nicht abgebildet. Abschusspläne, Rotwildgebiete und örtliche Regeln beachten.",rp:"Landesjagdverordnung RLP § 42 (Fassung 2013, gültig bis 31.3.2027), ohne Gewähr. Das neue Landesjagdgesetz vom 9.7.2025 gilt, eine angepasste LJVO liegt noch nicht vor – bitte aktuelle Fassung prüfen. Elterntierschutz (§ 32 Abs. 4 LJG) beachten.",by:"AVBayJG § 19, Übersicht des StMWi Stand 11/2026, ohne Gewähr. Bayern regelt Jagdzeiten allein nach Landesrecht. Abschusspläne und Vorgaben des Reviers beachten.",nw:"Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten."};
+const NOTES={st:"Übersicht des LJV Sachsen-Anhalt nach JagdZeitV und § 19 LJagdG-DVO, Rehwild nach Verordnung des LVwA vom 21.6.2017, ohne Gewähr. Iltis: Abschussverbot (Verordnung des LVwA vom 12.3.2024), deshalb nicht aufgeführt – Geltungsdauer bitte prüfen. Mauswiesel und Türkentaube haben keine Jagdzeit. Elterntierschutz (§ 22 Abs. 4 BJagdG) beachten.",bw:"DVO JWMG § 10 in der Fassung vom 13.1.2026 (GBl. 2026 Nr. 1), abgeglichen mit der Übersicht des LJV BW (Stand 14.4.2026), ohne Gewähr. Allgemeine Schonzeit 16.2.–15.4. (Schwarzwild und die Neozoen ausgenommen). Elterntiere in Setz- und Brutzeiten nicht bejagen. Rotwild nur in den Rotwildgebieten.",ni:"DVO-NJagdG, konsolidierte Fassung Stand 6.10.2026, ohne Gewähr. Wolf (Schnellabschuss/Interventionsgebiet) ist nicht abgebildet. Abschusspläne, Rotwildgebiete und örtliche Regeln beachten.",rp:"Landesjagdverordnung RLP § 42 (Fassung 2013, gültig bis 31.3.2027), ohne Gewähr. Das neue Landesjagdgesetz vom 9.7.2025 gilt, eine angepasste LJVO liegt noch nicht vor – bitte aktuelle Fassung prüfen. Elterntierschutz (§ 32 Abs. 4 LJG) beachten.",by:"AVBayJG § 19, Übersicht des StMWi Stand 11/2026, ohne Gewähr. Bayern regelt Jagdzeiten allein nach Landesrecht. Abschusspläne und Vorgaben des Reviers beachten.",nw:"Landesjagdzeitenverordnung NRW, ohne Gewähr; Balken = Jan–Dez. Rot-, Dam- und Sikawild nur in den dafür vorgesehenen Gebieten, Abschusspläne und örtliche Regeln beachten. Muttertierschutz und Setzzeiten beachten."};
 const DATA={nw:[
 {g:"hw",n:"Rotwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
 {g:"hw",n:"Damwild",r:[["Hirsche",HERB],["Alttiere",HERB],["Kälber",HERB],["Schmalspießer",SCHMAL],["Schmaltiere",SCHMAL]]},
@@ -189,6 +189,57 @@ H("fw","Waldschnepfe",["alle","16.10-15.1"]),H("fw","Blässhuhn",["alle","11.9-2
 H("fw","Möwen (Lach-, Sturm-, Silber-, Mantel-, Heringsmöwe)",["alle","1.10-10.2"]),
 H("fw","Eichelhäher, Elster, Raben- und Nebelkrähe",["alle","16.7-14.3"]),
 H("fw","Graureiher",["alle","16.9-31.10","nur im Umkreis von 200 m um geschlossene Gewässer"])];
+}
+{const A="1.8-31.1",B="1.9-31.1",SM="1.5-15.6,1.8-31.1",N="Jungtiere ganzjährig außerhalb der allgemeinen Schonzeit (16.4.–15.2.)",NC="außerhalb von Naturschutzgebieten und Naturdenkmalen",Z="1.10-15.2";
+DATA.bw=[
+H("hw","Rotwild",["Hirsche",A],["Alttiere",A],["Kälber",A],["Schmalspießer",SM,"Rotwildgebiet Odenwald abweichend: 1.5.–31.5."],["Schmaltiere",SM,"Rotwildgebiet Odenwald abweichend: 1.5.–31.5."]),
+H("hw","Damwild",["Hirsche",B],["Alttiere",B],["Kälber",B],["Schmalspießer","1.5-31.5,1.8-31.1"],["Schmaltiere","1.5-31.5,1.8-31.1"]),
+H("hw","Sikawild",["Alttiere",A],["Kälber",A],["Hirsche","1.5-31.1"],["Schmalspießer","1.5-31.1"],["Schmaltiere","1.5-31.1"]),
+H("hw","Gamswild",["Jährlinge","1.7-31.1","beider Geschlechter"],["Geißen",B],["Kitze",B],["Böcke",B]),
+H("hw","Muffelwild",["Widder","1.5-31.5,1.9-31.1"],["Schafe",B],["Lämmer",B]),
+H("hw","Schwarzwild",["alle",Y,"ganzjährig; sonst allgemeine Schonzeit 16.2.–15.4. (ASP-Prävention); Elterntierschutz beachten"]),
+H("hw","Rehwild",["Böcke","1.5-31.1"],["Schmalrehe","1.5-31.1"],["Ricken",B],["Kitze",B]),
+H("nh","Feldhase",["alle","1.10-31.12"]),
+H("nh","Wildkaninchen",["alle",Z],["Jungkaninchen","16.4-15.2"]),
+H("nh","Steinmarder",["alle",Z]),H("nh","Baummarder",["alle",Z]),H("nh","Iltis",["alle",Z]),H("nh","Hermelin",["alle",Z]),
+H("nh","Dachs",["alle","1.8-31.12"],["Jungdachse","1.6-31.12"]),
+H("nh","Fuchs",["alle","1.7-15.2","in Gebieten mit Hegegemeinschaft/Fachkonzept (Prädationsschutz) bis Ende Februar"],["Jungfüchse","16.4-15.2"]),
+H("nh","Marderhund",["alle",Y]),H("nh","Waschbär",["alle",Y]),H("nh","Nutria",["alle",Y]),H("nh","Mink",["alle",Y]),
+H("fw","Fasan",["alle","1.10-31.12"]),H("fw","Ringeltaube",["alle","1.11-10.2"]),H("fw","Türkentaube",["alle","1.11-10.2"]),
+H("fw","Höckerschwan",["alle","1.11-15.1"]),
+H("fw","Graugans",["alle","1.8-31.1"],["Jungtiere","16.4-15.2",N]),
+H("fw","Kanadagans",["alle","1.8-15.2"],["Jungtiere","16.4-15.2",N]),
+H("fw","Nilgans",["alle",Y]),H("fw","Rostgans",["alle",Y]),
+H("fw","Stockente",["alle","1.9-15.1"]),H("fw","Pfeifente",["alle","1.10-15.1"]),H("fw","Krickente",["alle","1.10-15.1"]),
+H("fw","Schnatterente",["alle","1.9-15.1"]),H("fw","Reiherente",["alle","1.10-15.1"]),H("fw","Tafelente",["alle","1.10-15.1"]),
+H("fw","Blässhuhn",["alle","1.10-15.1"]),H("fw","Waldschnepfe",["alle","1.10-31.12"]),
+H("fw","Rabenkrähe",["alle","1.8-15.2",NC]),H("fw","Elster",["alle","1.8-15.2",NC]),
+H("fw","Kormoran",["alle","16.8-15.3","kein Wild im Sinne der DVO: Abschuss nur nach Kormoranverordnung (20.7.2010), 1,5 Std. vor Sonnenaufgang bis 1,5 Std. nach Sonnenuntergang, weitere Vorgaben beachten"])];
+}
+{const A="1.8-31.1",B="1.9-31.1",R="1.5-31.1",M="1.5-30.6,1.9-31.1",G="1.9-15.1",GS="1.9.–31.10. nur zur Schadensabwehr in Trupps ab 50 Tieren auf neu bestellten Kulturen (Raps, Wintergetreide, Gartenbau)",Z="16.10-28.2";
+DATA.st=[
+H("hw","Rotwild",["Hirsche",A],["Alttiere",A],["Kälber",A],["Schmalspießer",R],["Schmaltiere","1.5-30.6,1.8-31.1"]),
+H("hw","Damwild",["Hirsche",B],["Alttiere",B],["Kälber",B],["Schmalspießer",R],["Schmaltiere",M]),
+H("hw","Sikawild",["Hirsche",B],["Alttiere",B],["Kälber","1.9-28.2"],["Schmalspießer","1.7-28.2"],["Schmaltiere","1.7-31.1"]),
+H("hw","Rehwild",["Böcke","15.4-31.1"],["Schmalrehe","15.4-31.1"],["Ricken",B],["Kitze",B]),
+H("hw","Gamswild",["alle","1.8-15.12"]),H("hw","Muffelwild",["alle",A]),
+H("hw","Schwarzwild",["alle",Y,"Elterntierschutz (führende Bachen) bleibt unberührt"]),
+H("nh","Feldhase",["alle","1.10-15.1"]),H("nh","Wildkaninchen",["alle",Y,"Elterntierschutz beachten"]),
+H("nh","Steinmarder",["alle",Z]),H("nh","Baummarder",["alle",Z]),H("nh","Hermelin",["alle",Z]),
+H("nh","Dachs",["alle",A]),H("nh","Fuchs",["alle","1.8-28.2"],["Jungfüchse",Y]),
+H("nh","Waschbär",["alle",Y,"Elterntierschutz beachten"]),H("nh","Marderhund",["alle",Y]),H("nh","Mink",["alle",Y]),H("nh","Nutria",["alle",Y]),
+H("fw","Rebhuhn",["alle","1.9-15.12"]),H("fw","Fasan",["alle","1.10-15.1"]),
+H("fw","Wildtruthuhn",["Hähne","15.3-15.5,1.10-15.1"],["Hennen","1.10-15.1"]),
+H("fw","Ringeltaube",["Alttauben","20.8-31.3","20.8.–31.10. und 21.2.–31.3. nur zur Schadensabwehr (Trupps ab 3 Tieren auf Acker/Grünland/Baumschulkulturen)"],["Jungtauben",Y,"21.2.–31.10. nur zur Schadensabwehr auf Acker/Grünland/Baumschulkulturen"]),
+H("fw","Höckerschwan",["alle","1.11-20.2"]),
+H("fw","Graugans",["alle","1.8-15.1",GS]),
+H("fw","Blässgans",["alle",G,GS]),H("fw","Saatgans",["alle",G,GS]),H("fw","Ringelgans",["alle",G,GS]),H("fw","Kanadagans",["alle",G,GS]),
+H("fw","Nilgans",["alte","16.7-28.2"],["juvenile",Y,"noch ohne bunte Färbung, Augen- und Brustfleck (§ 19 Abs. 7 LJagdG)"]),
+H("fw","Stockente",["alle",G]),
+H("fw","Pfeif-, Krick-, Spieß-, Berg-, Reiher-, Tafel-, Samt- und Trauerente",["alle","1.10-15.1"]),
+H("fw","Waldschnepfe",["alle","16.10-15.1"]),H("fw","Blässhuhn",["alle","11.9-20.2"]),
+H("fw","Möwen (Lach-, Sturm-, Silber-, Mantel-, Heringsmöwe)",["alle","1.10-10.2"]),
+H("fw","Aaskrähe",["alle","16.7-28.2"]),H("fw","Elster",["alle","16.7-28.2"])];
 }
 const TABS=[["nh","Niederwild · Haar"],["fw","Niederwild · Feder"],["hw","Schalenwild"],["free","Freigegeben","dj"],["book","Notizbuch","dj"]];
 // ===== Zustand =====
@@ -311,6 +362,7 @@ const unb64=t=>Uint8Array.from(atob(t.replace(/-/g,"+").replace(/_/g,"/")),c=>c.
 const enc=()=>"JZ1:"+b64(pako.deflateRaw(new TextEncoder().encode(JSON.stringify({l:S.land,f:Object.keys(S.free),n:S.notes}))));
 function dec(t){const i=t.indexOf("JZ1:");if(i<0)throw 0;const o=JSON.parse(new TextDecoder().decode(pako.inflateRaw(unb64(t.slice(i+4).replace(/\s/g,"")))));if(!Array.isArray(o.f)||o.f.some(k=>typeof k!=="string"))throw 0;return o}
 let stream,scanT,blob;
+const NOSCAN="Dieses Gerät hat keine QR-Erkennung im Browser. Scanne den Code mit der Kamera-App (iPhone) bzw. Google Lens (Android), kopiere den Text und füge ihn hier ein – oder lege jsQR.js ins Repository.";
 const msg=t=>{const e=$("dmsg");if(e)e.textContent=t};
 const stopCam=()=>{clearInterval(scanT);if(stream)stream.getTracks().forEach(t=>t.stop());stream=null};
 function openDlg(h){$("dbody").innerHTML=h;$("menu").classList.remove("open");$("dlg").showModal()}
@@ -337,15 +389,16 @@ function preview(o){
   $("apply").onclick=()=>{if(L)S.land=o.l;D=DATA[S.land]||[];S.free={};o.f.forEach(k=>S.free[k]=1);S.notes=notes;S.dj=true;S.tab="free";save();$("land").value=S.land;$("dlg").close();render()};
 }
 $("impBtn").onclick=()=>{
-  openDlg(`<h3>Freigaben importieren</h3><div class="ctl"><button class="btn" id="scan">Kamera scannen</button><label class="btn alt" style="cursor:pointer">Bild wählen<input type="file" id="pic" accept="image/*" hidden></label></div><video id="cam" playsinline muted hidden></video><textarea id="pin" rows="3" placeholder="Oder Text-Code hier einfügen (JZ1:…)"></textarea><button class="btn alt" id="chk">Code prüfen</button><p class="note" id="dmsg"></p><div id="dres"></div>`);
+  openDlg(`<h3>Freigaben importieren</h3><div class="ctl"><button class="btn" id="scan">Kamera scannen</button><label class="btn alt" style="cursor:pointer">Bild wählen<input type="file" id="pic" accept="image/*" hidden></label></div><video id="cam" playsinline muted hidden></video><textarea id="pin" rows="3" placeholder="Oder Text-Code hier einfügen (JZ1:…)"></textarea><div class="ctl"><button class="btn alt" id="clip">Aus Zwischenablage einfügen</button><button class="btn alt" id="chk">Code prüfen</button></div><p class="note" id="dmsg"></p><div id="dres"></div>`);
   $("chk").onclick=()=>handle($("pin").value);
+  $("clip").onclick=async()=>{try{const t=await navigator.clipboard.readText();$("pin").value=t;handle(t)}catch(e){msg("Zwischenablage nicht lesbar – bitte den Text ins Feld einfügen.")}};
   $("scan").onclick=async()=>{await loadJs();
-    if(!window.BarcodeDetector&&!window.jsQR)return msg("Scannen wird in diesem Browser nicht unterstützt. Bitte den Text-Code einfügen.");
+    if(!window.BarcodeDetector&&!window.jsQR)return msg(NOSCAN);
     try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})}catch(e){return msg("Kein Kamerazugriff – bitte Zugriff erlauben.")}
     const v=$("cam");v.srcObject=stream;v.hidden=false;await v.play();msg("Halte die Kamera auf den QR-Code …");
     scanT=setInterval(async()=>{const t=await detectFrom(v);if(t)handle(t)},300)};
   $("pic").onchange=async e=>{const f=e.target.files[0];if(!f)return;await loadJs();
-    if(!window.BarcodeDetector&&!window.jsQR)return msg("Bilder lesen wird in diesem Browser nicht unterstützt. Bitte den Text-Code einfügen.");
+    if(!window.BarcodeDetector&&!window.jsQR)return msg(NOSCAN);
     try{const t=await detectFrom(await createImageBitmap(f));t?handle(t):msg("Im Bild wurde kein QR-Code gefunden.")}catch(err){msg("Das Bild konnte nicht gelesen werden.")}};
 };
 $("dclose").onclick=()=>$("dlg").close();
