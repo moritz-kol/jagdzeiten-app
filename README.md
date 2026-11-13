@@ -35,7 +35,6 @@ Die App ist eine Web-App (PWA). Einmal zum Home-Bildschirm hinzugefügt, startet
 
 ### 🗓️ Jagdzeiten
 - **Bundesland-Auswahl** im Burger-Menü: Angezeigt werden nur die Wildarten und Zeiten des gewählten Landes (Landesjagdgesetz bzw. Landesjagdzeitenverordnung).
-- Drei Tabs: **Niederwild · Haar**, **Niederwild · Feder** und **Schalenwild** (inkl. Rehwild).
 - Pro Wildart alle **Klassen und Geschlechter** mit eigener Jagdzeit, z. B. Hirsche, Alttiere, Kälber, Schmalspießer, Schmaltiere.
 - **Tagesaktueller Status** je Zeile: *jagbar* oder *Schonzeit*, dazu ein **Jahresbalken** (Januar bis Dezember).
 - **Automatische Sortierung:** Jagbares steht oben, Schonzeit unten und ausgegraut, bei Wildarten und bei Klassen.
@@ -45,8 +44,8 @@ Die App ist eine Web-App (PWA). Einmal zum Home-Bildschirm hinzugefügt, startet
 Im **Burger-Menü** einschaltbar.
 
 - **Freigaben bei der Ansprache:** Haken neben jeder Klasse, ein Haken an der Überschrift gibt die ganze Wildart frei.
-- **Tab „Freigegeben“:** zeigt nur das Freigegebene. Die Haken sind dort ausgeblendet, damit nichts versehentlich abgewählt wird.
-- **Notizen:** Neben jeder Wildart und Klasse gibt es einen **Notiz-Knopf** für Einschränkungen, z. B. „Rehböcke nur bis lauscherhoch“.
+- **Tab „Freigegeben“:** zeigt nur die abgehakten, freigegebenen Wildarten.
+- **Notizen:** Neben jeder Wildart und Klasse gibt es einen **Notiz-Knopf** für Einschränkungen.
 - Freigaben und Notizen bleiben **gespeichert**. Im Burger-Menü lassen sie sich zurücksetzen.
 
 ### 📤 Freigaben teilen (komplett offline)
@@ -68,7 +67,7 @@ Plan mit dem **Stand in der Mitte** und Ringen bei **50, 100 und 150 m**.
 - **GPS-Standort:** „Standort abrufen“ bestimmt den Stand. Jede Markierung erhält daraus errechnete Koordinaten.
 - **Norden ausrichten:** Handy flach halten, Oberkante in Blickrichtung, tippen. Der Plan dreht sich **einmalig** nach Norden und bleibt dann stehen. „Zurücksetzen“ stellt Norden wieder nach oben.
 - **Markierungsliste:** nummeriert, mit Uhrzeit, **Koordinaten** (kopierbar) und **Google-Maps-Link**.
-- Letzte Markierung entfernen oder alle löschen.
+- Optionen die letzte Markierung zu entfernen oder alle zu löschen.
 
 > Die Koordinaten sind eine **Schätzung** aus Standort und Tippposition, also nur so genau wie GPS und Tippen. Die Karte in Google Maps braucht Internet, Koordinaten und Liste funktionieren offline.
 
@@ -96,38 +95,3 @@ Alle Angaben sind **ohne Gewähr**. Rechtslage und Fristen können sich ändern.
 Alles bleibt **lokal auf deinem Gerät**. Es gibt keine Server, keine Konten und kein Tracking. Nur beim Öffnen eines Google-Maps-Links wird die Koordinate an Google übergeben.
 
 ---
-
-## 🛠️ Für Entwickler
-
-### Dateien
-| Datei | Zweck |
-|---|---|
-| `index.html` | komplette App (HTML, CSS, JavaScript und Daten) |
-| `manifest.webmanifest` | Name, Farben und Icons für die Installation |
-| `sw.js` | Service Worker für die Offline-Nutzung |
-| `icon-192.png`, `icon-512.png` | App-Icons |
-| `qr.js` | QR-Code-Erzeugung (QRCode for JavaScript, Kazuhiko Arase, MIT) |
-| `pako.min.js` | Komprimierung der Freigabe-Codes (pako, MIT) |
-| `jsQR.js` | optional: QR-Erkennung für Browser ohne eigene Funktion |
-
-> Dateinamen sind auf GitHub Pages **groß-/kleinschreibungssensitiv**: `qr.js`, `pako.min.js` und `jsQR.js` müssen exakt so heißen.
-
-### Jagdzeiten ergänzen
-Die Daten stehen im Objekt `DATA` am Anfang des Skripts in `index.html`, je Bundesland ein Eintrag (`nw`, `ni`, `rp`, `by`). Ein weiteres Land wird als `DATA.xx=[…]` ergänzt, der Hinweistext steht in `NOTES`. Zeilenformat:
-
-```js
-["Klasse", "von-bis", "Hinweis (optional)", "Schonzeit bis (optional, JJJJ-MM-TT)"]
-```
-
-Beispiel: `["Schmalrehe", "1.5-31.5,1.9-31.1"]`. Mehrere Zeiträume mit Komma trennen, ganzjährig ist `1.1-31.12`.
-
-### Neue Version veröffentlichen
-1. In `sw.js` die Versionsnummer `V` erhöhen (z. B. `jagdzeiten-v18`).
-2. Im Link oben `?v=` auf dieselbe Zahl setzen, damit beim Testen immer die frische Seite geladen wird.
-
-### GitHub Pages
-1. Alle Dateien in ein Repository hochladen.
-2. **Settings → Pages**, Branch `main` und Ordner `/ (root)` wählen.
-3. Nach ein bis zwei Minuten ist die App unter `https://moritz-kol.github.io/jagdzeiten-app/` erreichbar.
-
-GPS und Kompass funktionieren nur über **https**, nicht beim lokalen Öffnen von `index.html`.
